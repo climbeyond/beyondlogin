@@ -1,0 +1,32 @@
+<resources>
+    <string name="beyond_login_navigate_back">Navigate back</string>
+    <string name="beyond_login_desc_show_password">Show / hide password</string>
+
+    <string name="beyond_login_field_email_fill">Please fill the email field</string>
+    <string name="beyond_login_field_password_fill">Please fill the password field</string>
+
+    <string name="beyond_login_splash_logo">Logo</string>
+    <string name="beyond_login_splash_unknown_error">Unknown error</string>
+    <string name="beyond_login_splash_503">Service Unavailable</string>
+    <string name="beyond_login_splash_502">Bad Gateway</string>
+
+    <string name="beyond_login_login_header">Login</string>
+    <string name="beyond_login_login_email">Email</string>
+    <string name="beyond_login_login_password">Password</string>
+    <string name="beyond_login_login_button">Login</string>
+    <string name="beyond_login_login_no_account">Don't have an account?</string>
+    <string name="beyond_login_login_no_account_register">Sign up</string>
+
+    <string name="beyond_login_register_header">Register</string>
+    <string name="beyond_login_register_email">Email</string>
+    <string name="beyond_login_register_password">Password</string>
+    <string name="beyond_login_register_button">Register</string>
+    <string name="beyond_login_register_has_account">Already have an account?</string>
+    <string name="beyond_login_register_has_account_login">Sign in</string>
+
+    <string name="beyond_login_session_header">Session</string>
+    <string name="beyond_login_session_account_id">Account ID</string>
+    <string name="beyond_login_session_session_expire">Session expiration time</string>
+    <string name="beyond_login_session_email">Email</string>
+    <string name="beyond_login_session_logout">Logout</string>
+</resources>
