@@ -19,12 +19,11 @@ import app.climbeyond.beyondlogin.helpers.BLLogger
 import app.climbeyond.beyondlogin.helpers.Colors
 import app.climbeyond.beyondlogin.ui.ControllerView
 import app.climbeyond.beyondlogin.ui.component.Elements
-import beyondlogin.shared.generated.resources.Res
-import beyondlogin.shared.generated.resources.beyond_login_logo
-import beyondlogin.shared.generated.resources.beyond_login_splash_502
-import beyondlogin.shared.generated.resources.beyond_login_splash_503
-import beyondlogin.shared.generated.resources.beyond_login_splash_logo
-import beyondlogin.shared.generated.resources.beyond_login_splash_unknown_error
+import climbeyond.beyondlogin.generated.resources.Res
+import climbeyond.beyondlogin.generated.resources.beyond_login_logo
+import climbeyond.beyondlogin.generated.resources.beyond_login_splash_502
+import climbeyond.beyondlogin.generated.resources.beyond_login_splash_503
+import climbeyond.beyondlogin.generated.resources.beyond_login_splash_logo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -60,11 +59,9 @@ class SplashView(private val self: BeyondLogin) : ControllerView.RequireView {
 
     private suspend fun handleResponseCode(code: Int): Boolean {
         return when (code) {
-            // Call was ok - but there should be no reason to end up here
+            // whoami call succeed but there is no active session
             200 -> {
-                BLLogger.logError("SplashView.handleResponseCode: fatal error [code: $code]")
-                errorMessage.value = getString(Res.string.beyond_login_splash_unknown_error)
-                true
+                false
             }
             // Token not valid or expired
             401 -> {

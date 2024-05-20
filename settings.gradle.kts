@@ -16,5 +16,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "beyondlogin"
+rootProject.name = "climbeyond"
 include(":shared")
+project(":shared").name = "beyondlogin"

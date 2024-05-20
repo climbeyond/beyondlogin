@@ -18,6 +18,7 @@ interface SettingsListener {
 @Serializable
 object Settings {
 
+    @Serializable
     data class Data(val kratosUrl: String) {
         internal var logLevel: ApiLogLevel = ApiLogLevel.INFO
         internal var logTag = "BeyondLogin"
