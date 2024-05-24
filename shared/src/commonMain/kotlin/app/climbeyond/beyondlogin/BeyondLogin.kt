@@ -79,76 +79,76 @@ class BeyondLogin(internal val platform: BeyondLoginPlatform, viewListener: View
         }
     }
 
-    /**
-     * Check if there is stored session token and it's valid
-     */
-    fun sessionHasActive(callback: (token: String?) -> Unit) {
-        BLLogger.logDebug("Call: BeyondLogin.sessionHasActive")
-
-        try {
-            Settings.load(platform)
-            Session.checkActive(platform) { token, _, _ ->
-                CoroutineScope(Dispatchers.Main).launch {
-                    callback(token)
-                }
-            }
-
-        } catch (ex: BeyondException) {
-            CoroutineScope(Dispatchers.Main).launch {
-                callback(null)
-            }
-        }
-    }
-
-    /**
-     * Refresh current session if possible
-     */
-    fun sessionRefresh(callback: (token: String?) -> Unit) {
-        BLLogger.logDebug("Call: BeyondLogin.sessionRefresh")
-
-        try {
-            Settings.load(platform)
-            Session.refresh(platform) { token ->
-                CoroutineScope(Dispatchers.Main).launch {
-                    callback(token)
-                }
-            }
-
-        } catch (ex: BeyondException) {
-            CoroutineScope(Dispatchers.Main).launch {
-                callback(null)
-            }
-        }
-    }
-
-    /**
-     * Check if stored session exists and it has not expired
-     */
-    fun storeSessionHasNotExpired(): Boolean {
-        BLLogger.logDebug("Call: BeyondLogin.storeSessionHasNotExpired")
-
-        return Session.storeHasNotExpired(platform)
-    }
-
-    /**
-     * Check if stored session exists and return id and token
-     */
-    fun storeGetSession(): SessionInfo? {
-        BLLogger.logDebug("Call: BeyondLogin.storeGetSession")
-
-        return Session.storeGetSession(platform)
-    }
-
-    /**
-     * Get stored identity id
-     */
-    fun storeGetIdentityId(): String? {
-        BLLogger.logDebug("Call: BeyondLogin.storeGetIdentityId")
-
-        return Session.storeGetIdentityId(platform)
-    }
-
     companion object {
+        /**
+         * Check if there is stored session token and it's valid
+         */
+        fun sessionHasActive(platform: BeyondLoginPlatform, callback: (token: String?) -> Unit) {
+            BLLogger.logDebug("Call: BeyondLogin.sessionHasActive")
+
+            try {
+                Settings.load(platform)
+                Session.checkActive(platform) { token, _, _ ->
+                    CoroutineScope(Dispatchers.Main).launch {
+                        callback(token)
+                    }
+                }
+
+            } catch (ex: BeyondException) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    callback(null)
+                }
+            }
+        }
+
+        /**
+         * Refresh current session if possible
+         */
+        fun sessionRefresh(platform: BeyondLoginPlatform, callback: (token: String?) -> Unit) {
+            BLLogger.logDebug("Call: BeyondLogin.sessionRefresh")
+
+            try {
+                Settings.load(platform)
+                Session.refresh(platform) { token ->
+                    CoroutineScope(Dispatchers.Main).launch {
+                        callback(token)
+                    }
+                }
+
+            } catch (ex: BeyondException) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    callback(null)
+                }
+            }
+        }
+
+        /**
+         * Check if stored session exists and it has not expired
+         */
+        fun storeSessionHasNotExpired(platform: BeyondLoginPlatform): Boolean {
+            BLLogger.logDebug("Call: BeyondLogin.storeSessionHasNotExpired")
+
+            return Session.storeHasNotExpired(platform)
+        }
+
+        /**
+         * Check if stored session exists and return id and token
+         */
+        fun storeGetSession(platform: BeyondLoginPlatform): SessionInfo? {
+            BLLogger.logDebug("Call: BeyondLogin.storeGetSession")
+
+            return Session.storeGetSession(platform)
+        }
+
+        /**
+         * Get stored identity id
+         */
+        fun storeGetIdentityId(platform: BeyondLoginPlatform): String? {
+            BLLogger.logDebug("Call: BeyondLogin.storeGetIdentityId")
+
+            return Session.storeGetIdentityId(platform)
+        }
+
         fun getOryApi(kratosUrl: String,
                 logLevel: Settings.ApiLogLevel = Settings.ApiLogLevel.INFO): FrontendApi {
 

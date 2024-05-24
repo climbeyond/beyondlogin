@@ -51,6 +51,7 @@ import climbeyond.beyondlogin.generated.resources.beyond_login_login_header
 import climbeyond.beyondlogin.generated.resources.beyond_login_login_no_account
 import climbeyond.beyondlogin.generated.resources.beyond_login_login_no_account_register
 import climbeyond.beyondlogin.generated.resources.beyond_login_login_password
+import climbeyond.beyondlogin.generated.resources.beyond_login_navigate_back
 import climbeyond.beyondlogin.generated.resources.beyond_login_session_email
 import io.ktor.util.reflect.typeInfo
 import kotlinx.coroutines.CoroutineScope
@@ -85,12 +86,12 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
                     .fillMaxHeight()
         ) {
             Icon(vectorResource(Res.drawable.beyond_login_arrow_back),
-                    stringResource(Res.string.beyond_login_session_email),
+                    stringResource(Res.string.beyond_login_navigate_back),
                     Modifier
                         .padding(top = 30.dp, start = 30.dp)
                         .clickable {
                             self.viewService.let {
-                                it.listenerView?.close()
+                                self.viewService.listener.closeBeyondLogin()
                             }
                     },
                     tint = Colors.drawable_tint_white)
@@ -237,8 +238,7 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
                             self.viewService.listener.loginSuccess(
                                 SessionInfo(body.session.id, token, expires),
                                 { success ->
-                                    // Tell client that we are now logged and BeyondOry view closing
-                                    self.viewService.listenerView?.close()
+                                    // Tell client that we are now logged and BeyondLogin should close
                                     self.viewService.listener.loggedClose(success)
                                 },
                                 { failure ->

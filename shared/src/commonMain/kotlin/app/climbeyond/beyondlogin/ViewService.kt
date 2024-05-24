@@ -18,14 +18,10 @@ class ViewService(val settings: Settings.Data, val listener: Listener) : Setting
         fun loggedClose(message: String)
         fun logOut(success: Boolean)
         fun unknownException(message: String)
-    }
-
-    interface ViewListener {
-        fun close()
+        fun closeBeyondLogin()
     }
 
     val currentView = mutableStateOf(ControllerView.Screen.SPLASH)
-    var listenerView: ViewListener? = null
 
     internal var oryFlowId: String = "-"
     internal var orySession: sh.ory.model.Session? = null

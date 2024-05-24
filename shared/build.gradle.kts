@@ -162,7 +162,7 @@ afterEvaluate {
 }
 
 tasks.create<Copy>("publish-android") {
-    val androidName = "beyondory-${rootProject.extra.get("versionName") as String}.aar"
+    val androidName = "beyondlogin-${rootProject.extra.get("versionName") as String}.aar"
     val apkDir = file("${project.rootDir.absolutePath}/shared/build/outputs/aar/beyondlogin-release.aar")
     val outDir = file("${project.rootDir.absolutePath}/aar")
 

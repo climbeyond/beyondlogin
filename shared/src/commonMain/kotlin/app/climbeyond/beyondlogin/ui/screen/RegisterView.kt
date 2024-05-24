@@ -44,6 +44,7 @@ import climbeyond.beyondlogin.generated.resources.beyond_login_desc_show_passwor
 import climbeyond.beyondlogin.generated.resources.beyond_login_eye
 import climbeyond.beyondlogin.generated.resources.beyond_login_icon_email
 import climbeyond.beyondlogin.generated.resources.beyond_login_icon_lock
+import climbeyond.beyondlogin.generated.resources.beyond_login_navigate_back
 import climbeyond.beyondlogin.generated.resources.beyond_login_register_button
 import climbeyond.beyondlogin.generated.resources.beyond_login_register_email
 import climbeyond.beyondlogin.generated.resources.beyond_login_register_has_account
@@ -86,7 +87,7 @@ class RegisterView(private val self: BeyondLogin) : ControllerView.RequireView {
                     .fillMaxHeight()
         ) {
             Icon(vectorResource(Res.drawable.beyond_login_arrow_back),
-                    stringResource(Res.string.beyond_login_session_email),
+                    stringResource(Res.string.beyond_login_navigate_back),
                     Modifier
                         .padding(top = 30.dp, start = 30.dp)
                         .clickable {
@@ -253,8 +254,7 @@ class RegisterView(private val self: BeyondLogin) : ControllerView.RequireView {
                             self.viewService.listener.registerSuccess(
                                 SessionInfo(session.id, token, expires),
                                 { success ->
-                                    // Tell client that we are now logged and BeyondOry view closing
-                                    self.viewService.listenerView?.close()
+                                    // Tell client that we are now logged and BeyondLogin should close
                                     self.viewService.listener.loggedClose(success)
                                 },
                                 { failure ->

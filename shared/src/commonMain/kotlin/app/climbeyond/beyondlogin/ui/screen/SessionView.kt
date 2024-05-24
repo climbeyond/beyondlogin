@@ -28,6 +28,7 @@ import app.climbeyond.beyondlogin.ui.component.Elements
 import climbeyond.beyondlogin.generated.resources.Res
 import climbeyond.beyondlogin.generated.resources.beyond_login_arrow_back
 import climbeyond.beyondlogin.generated.resources.beyond_login_logout
+import climbeyond.beyondlogin.generated.resources.beyond_login_navigate_back
 import climbeyond.beyondlogin.generated.resources.beyond_login_session_account_id
 import climbeyond.beyondlogin.generated.resources.beyond_login_session_email
 import climbeyond.beyondlogin.generated.resources.beyond_login_session_header
@@ -65,12 +66,12 @@ class SessionView(private val self: BeyondLogin) : ControllerView.RequireView {
                     .fillMaxHeight()
         ) {
             Icon(vectorResource(Res.drawable.beyond_login_arrow_back),
-                    stringResource(Res.string.beyond_login_session_email),
+                    stringResource(Res.string.beyond_login_navigate_back),
                     Modifier
                         .padding(top = 30.dp, start = 30.dp)
                         .clickable {
                             self.viewService.let {
-                                it.listenerView?.close()
+                                self.viewService.listener.closeBeyondLogin()
                             }
                         },
                     tint = Colors.drawable_tint_white)
