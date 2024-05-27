@@ -22,6 +22,7 @@ import sh.ory.model.UiContainer
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
+import kotlinx.serialization.json.JsonObject
 
 /**
  * This flow is used when an identity wants to update settings (e.g. profile data, passwords, ...) in a selfservice manner.  We recommend reading the [User Settings Documentation](../self-service/flows/user-settings)
@@ -69,7 +70,7 @@ data class SettingsFlow (
     @SerialName(value = "active") val active: kotlin.String? = null,
 
     /* Contains a list of actions, that could follow this flow  It can, for example, contain a reference to the verification flow, created as part of the user's registration. */
-    @SerialName(value = "continue_with") val continueWith: kotlin.Array<ContinueWith>? = null,
+    @SerialName(value = "continue_with") val continueWith: kotlin.Array<JsonObject>? = null,
 
     /* ReturnTo contains the requested return_to URL. */
     @SerialName(value = "return_to") val returnTo: kotlin.String? = null,

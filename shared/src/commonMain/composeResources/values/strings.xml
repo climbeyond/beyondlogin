@@ -29,4 +29,11 @@
     <string name="beyond_login_session_session_expire">Session expiration time</string>
     <string name="beyond_login_session_email">Email</string>
     <string name="beyond_login_session_logout">Logout</string>
+
+    <string name="beyond_login_recovery_header">Password recovery</string>
+    <string name="beyond_login_recovery_button">Recover</string>
+    <string name="beyond_login_recovery_lost_password">Password recovery</string>
+    <string name="beyond_login_recovery_new_password">New password</string>
+    <string name="beyond_login_recovery_change_password_button">Change password</string>
+    <string name="beyond_login_success_return">Password has been changed! You can now login with your new password</string>
 </resources>

@@ -18,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
@@ -154,6 +155,7 @@ object Elements {
             trailingIcon: @Composable (() -> Unit)? = null,
             closeOnDone: Boolean = false,
             lines: Int = 1,
+            textCenter: Boolean = false,
             valueChange: ((value: String) -> Unit)? = null,
             done: (value: String) -> Unit): (String) -> Unit {
 
@@ -188,6 +190,8 @@ object Elements {
                 minLines = lines,
                 maxLines = lines,
                 label = { Text(label) },
+                textStyle = LocalTextStyle.current.copy(
+                        textAlign = if (textCenter) TextAlign.Center else TextAlign.Start),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = Colors.text_green,
                         unfocusedBorderColor = Colors.white,

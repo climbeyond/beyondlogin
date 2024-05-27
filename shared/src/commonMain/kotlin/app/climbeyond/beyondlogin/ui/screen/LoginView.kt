@@ -52,6 +52,7 @@ import climbeyond.beyondlogin.generated.resources.beyond_login_login_no_account
 import climbeyond.beyondlogin.generated.resources.beyond_login_login_no_account_register
 import climbeyond.beyondlogin.generated.resources.beyond_login_login_password
 import climbeyond.beyondlogin.generated.resources.beyond_login_navigate_back
+import climbeyond.beyondlogin.generated.resources.beyond_login_recovery_lost_password
 import io.ktor.util.reflect.typeInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -206,6 +207,27 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
                             .padding(top = 40.dp, start = 40.dp, end = 40.dp),
                         color = Colors.text_error,
                         fontSize = 14.sp)
+            }
+
+            Row(
+                    Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+            ) {
+                Text(stringResource(Res.string.beyond_login_recovery_lost_password),
+                        Modifier
+                            .padding(top = 20.dp)
+                            .align(Alignment.CenterVertically)
+                            .height(48.dp)
+                            .wrapContentHeight()
+                            .clickable {
+                                coroutine.launch {
+                                    RecoveryView.init(self)
+                                }
+                            },
+                        color = Colors.text_white,
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Center)
             }
 
             Spacer(modifier = Modifier.weight(1f))

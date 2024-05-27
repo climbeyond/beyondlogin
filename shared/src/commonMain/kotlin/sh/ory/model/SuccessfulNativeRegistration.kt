@@ -22,6 +22,7 @@ import sh.ory.model.Session
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
+import kotlinx.serialization.json.JsonObject
 
 /**
  * The Response for Registration Flows via API
@@ -38,7 +39,7 @@ data class SuccessfulNativeRegistration (
     @SerialName(value = "identity") @Required val identity: Identity,
 
     /* Contains a list of actions, that could follow this flow  It can, for example, this will contain a reference to the verification flow, created as part of the user's registration or the token of the session. */
-    @SerialName(value = "continue_with") val continueWith: kotlin.Array<ContinueWith>? = null,
+    @SerialName(value = "continue_with") val continueWith: kotlin.Array<JsonObject>? = null,
 
     @SerialName(value = "session") val session: Session? = null,
 

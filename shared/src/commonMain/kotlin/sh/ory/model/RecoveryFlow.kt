@@ -21,6 +21,7 @@ import sh.ory.model.UiContainer
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
+import kotlinx.serialization.json.JsonObject
 
 /**
  * This request is used when an identity wants to recover their account.  We recommend reading the [Account Recovery Documentation](../self-service/flows/password-reset-account-recovery)
@@ -65,7 +66,7 @@ data class RecoveryFlow (
     @SerialName(value = "active") val active: kotlin.String? = null,
 
     /* Contains possible actions that could follow this flow */
-    @SerialName(value = "continue_with") val continueWith: kotlin.Array<ContinueWith>? = null,
+    @SerialName(value = "continue_with") val continueWith: kotlin.Array<JsonObject>? = null,
 
     /* ReturnTo contains the requested return_to URL. */
     @SerialName(value = "return_to") val returnTo: kotlin.String? = null,
