@@ -15,7 +15,6 @@
 
 package sh.ory.model
 
-import sh.ory.model.IdentityState
 import sh.ory.model.IdentityWithCredentials
 import sh.ory.model.RecoveryIdentityAddress
 import sh.ory.model.VerifiableIdentityAddress
@@ -34,7 +33,7 @@ import kotlinx.serialization.json.JsonObject
  * @param metadataAdmin Store metadata about the user which is only accessible through admin APIs such as `GET /admin/identities/<id>`.
  * @param metadataPublic Store metadata about the identity which the identity itself can see when calling for example the session endpoint. Do not store sensitive information (e.g. credit score) about the identity in this field.
  * @param recoveryAddresses RecoveryAddresses contains all the addresses that can be used to recover an identity.  Use this structure to import recovery addresses for an identity. Please keep in mind that the address needs to be represented in the Identity Schema or this field will be overwritten on the next identity update.
- * @param state 
+ * @param state State is the identity's state. active StateActive inactive StateInactive
  * @param verifiableAddresses VerifiableAddresses contains all the addresses that can be verified by the user.  Use this structure to import verified addresses for an identity. Please keep in mind that the address needs to be represented in the Identity Schema or this field will be overwritten on the next identity update.
  */
 @Serializable
@@ -58,10 +57,23 @@ data class CreateIdentityBody (
     /* RecoveryAddresses contains all the addresses that can be used to recover an identity.  Use this structure to import recovery addresses for an identity. Please keep in mind that the address needs to be represented in the Identity Schema or this field will be overwritten on the next identity update. */
     @SerialName(value = "recovery_addresses") val recoveryAddresses: kotlin.Array<RecoveryIdentityAddress>? = null,
 
-    @SerialName(value = "state") val state: IdentityState? = null,
+    /* State is the identity's state. active StateActive inactive StateInactive */
+    @SerialName(value = "state") val state: CreateIdentityBody.State? = null,
 
     /* VerifiableAddresses contains all the addresses that can be verified by the user.  Use this structure to import verified addresses for an identity. Please keep in mind that the address needs to be represented in the Identity Schema or this field will be overwritten on the next identity update. */
     @SerialName(value = "verifiable_addresses") val verifiableAddresses: kotlin.Array<VerifiableIdentityAddress>? = null
 
-)
+) {
+
+    /**
+     * State is the identity's state. active StateActive inactive StateInactive
+     *
+     * Values: ACTIVE,INACTIVE
+     */
+    @Serializable
+    enum class State(val value: kotlin.String) {
+        @SerialName(value = "active") ACTIVE("active"),
+        @SerialName(value = "inactive") INACTIVE("inactive");
+    }
+}
 

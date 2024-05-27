@@ -26,7 +26,7 @@ import kotlinx.serialization.encoding.*
  * @param status VerifiableAddressStatus must not exceed 16 characters as that is the limitation in the SQL Schema
  * @param `value` The address value  example foo@user.com
  * @param verified Indicates if the address has already been verified
- * @param via VerifiableAddressType must not exceed 16 characters as that is the limitation in the SQL Schema
+ * @param via The delivery method
  * @param createdAt When this entry was created
  * @param id The ID
  * @param updatedAt When this entry was last updated
@@ -45,8 +45,8 @@ data class VerifiableIdentityAddress (
     /* Indicates if the address has already been verified */
     @SerialName(value = "verified") @Required val verified: kotlin.Boolean,
 
-    /* VerifiableAddressType must not exceed 16 characters as that is the limitation in the SQL Schema */
-    @SerialName(value = "via") @Required val via: kotlin.String,
+    /* The delivery method */
+    @SerialName(value = "via") @Required val via: VerifiableIdentityAddress.Via,
 
     /* When this entry was created */
     @SerialName(value = "created_at") val createdAt: kotlinx.datetime.Instant? = null,
@@ -59,5 +59,17 @@ data class VerifiableIdentityAddress (
 
     @SerialName(value = "verified_at") val verifiedAt: kotlinx.datetime.Instant? = null
 
-)
+) {
+
+    /**
+     * The delivery method
+     *
+     * Values: EMAIL,SMS
+     */
+    @Serializable
+    enum class Via(val value: kotlin.String) {
+        @SerialName(value = "email") EMAIL("email"),
+        @SerialName(value = "sms") SMS("sms");
+    }
+}
 

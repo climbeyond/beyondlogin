@@ -55,8 +55,8 @@ open class IdentityApi : ApiClient {
     ): super(baseUrl = baseUrl, httpClient = httpClient)
 
     /**
-     * Create and deletes multiple identities
-     * Creates or delete multiple [identities](https://www.ory.sh/docs/kratos/concepts/identity-user-model). This endpoint can also be used to [import credentials](https://www.ory.sh/docs/kratos/manage-identities/import-user-accounts-identities) for instance passwords, social sign in configurations or multifactor methods.
+     * Create multiple identities
+     * Creates multiple [identities](https://www.ory.sh/docs/kratos/concepts/identity-user-model). This endpoint can also be used to [import credentials](https://www.ory.sh/docs/kratos/manage-identities/import-user-accounts-identities) for instance passwords, social sign in configurations or multifactor methods.
      * @param patchIdentitiesBody  (optional)
      * @return BatchPatchIdentitiesResponse
      */
@@ -156,17 +156,19 @@ open class IdentityApi : ApiClient {
     /**
      * Create a Recovery Link
      * This endpoint creates a recovery link which should be given to the user in order for them to recover (or activate) their account.
+     * @param returnTo  (optional)
      * @param createRecoveryLinkForIdentityBody  (optional)
      * @return RecoveryLinkForIdentity
      */
     @Suppress("UNCHECKED_CAST")
-    open suspend fun createRecoveryLinkForIdentity(createRecoveryLinkForIdentityBody: CreateRecoveryLinkForIdentityBody? = null): HttpResponse<RecoveryLinkForIdentity> {
+    open suspend fun createRecoveryLinkForIdentity(returnTo: kotlin.String? = null, createRecoveryLinkForIdentityBody: CreateRecoveryLinkForIdentityBody? = null): HttpResponse<RecoveryLinkForIdentity> {
 
         val localVariableAuthNames = listOf<String>("oryAccessToken")
 
         val localVariableBody = createRecoveryLinkForIdentityBody
 
         val localVariableQuery = mutableMapOf<String, List<String>>()
+        returnTo?.apply { localVariableQuery["return_to"] = listOf("$returnTo") }
         val localVariableHeaders = mutableMapOf<String, String>()
 
         val localVariableConfig = RequestConfig<kotlin.Any?>(
@@ -225,14 +227,35 @@ open class IdentityApi : ApiClient {
     @Serializable
     enum class TypeDeleteIdentityCredentials(val value: kotlin.String) {
         
+        @SerialName(value = "password")
+        PASSWORD("password"),
+        
+        @SerialName(value = "oidc")
+        OIDC("oidc"),
+        
         @SerialName(value = "totp")
         TOTP("totp"),
+        
+        @SerialName(value = "lookup_secret")
+        LOOKUP_SECRET("lookup_secret"),
         
         @SerialName(value = "webauthn")
         WEBAUTHN("webauthn"),
         
-        @SerialName(value = "lookup")
-        LOOKUP("lookup")
+        @SerialName(value = "code")
+        CODE("code"),
+        
+        @SerialName(value = "passkey")
+        PASSKEY("passkey"),
+        
+        @SerialName(value = "profile")
+        PROFILE("profile"),
+        
+        @SerialName(value = "link_recovery")
+        LINK_RECOVERY("link_recovery"),
+        
+        @SerialName(value = "code_recovery")
+        CODE_RECOVERY("code_recovery")
         
     }
 
@@ -240,7 +263,7 @@ open class IdentityApi : ApiClient {
      * Delete a credential for a specific identity
      * Delete an [identity](https://www.ory.sh/docs/kratos/concepts/identity-user-model) credential by its type You can only delete second factor (aal2) credentials.
      * @param id ID is the identity&#39;s ID.
-     * @param type Type is the credential&#39;s Type. One of totp, webauthn, lookup
+     * @param type Type is the type of credentials to be deleted. password CredentialsTypePassword oidc CredentialsTypeOIDC totp CredentialsTypeTOTP lookup_secret CredentialsTypeLookup webauthn CredentialsTypeWebAuthn code CredentialsTypeCodeAuth passkey CredentialsTypePasskey profile CredentialsTypeProfile link_recovery CredentialsTypeRecoveryLink  CredentialsTypeRecoveryLink is a special credential type linked to the link strategy (recovery flow).  It is not used within the credentials object itself. code_recovery CredentialsTypeRecoveryCode
      * @return void
      */
     open suspend fun deleteIdentityCredentials(id: kotlin.String, type: TypeDeleteIdentityCredentials): HttpResponse<Unit> {
@@ -376,17 +399,32 @@ open class IdentityApi : ApiClient {
         @SerialName(value = "password")
         PASSWORD("password"),
         
+        @SerialName(value = "oidc")
+        OIDC("oidc"),
+        
         @SerialName(value = "totp")
         TOTP("totp"),
         
-        @SerialName(value = "oidc")
-        OIDC("oidc"),
+        @SerialName(value = "lookup_secret")
+        LOOKUP_SECRET("lookup_secret"),
         
         @SerialName(value = "webauthn")
         WEBAUTHN("webauthn"),
         
-        @SerialName(value = "lookup_secret")
-        LOOKUP_SECRET("lookup_secret")
+        @SerialName(value = "code")
+        CODE("code"),
+        
+        @SerialName(value = "passkey")
+        PASSKEY("passkey"),
+        
+        @SerialName(value = "profile")
+        PROFILE("profile"),
+        
+        @SerialName(value = "link_recovery")
+        LINK_RECOVERY("link_recovery"),
+        
+        @SerialName(value = "code_recovery")
+        CODE_RECOVERY("code_recovery")
         
     }
 
@@ -465,6 +503,12 @@ open class IdentityApi : ApiClient {
     @Serializable
     enum class ExpandGetSession(val value: kotlin.String) {
         
+        @SerialName(value = "identity")
+        IDENTITY("identity"),
+        
+        @SerialName(value = "devices")
+        DEVICES("devices")
+        
     }
 
     /**
@@ -502,16 +546,40 @@ open class IdentityApi : ApiClient {
     }
 
 
+
+    /**
+     * enum for parameter consistency
+     */
+    @Serializable
+    enum class ConsistencyListIdentities(val value: kotlin.String) {
+        
+        @SerialName(value = "")
+        EMPTY(""),
+        
+        @SerialName(value = "strong")
+        STRONG("strong"),
+        
+        @SerialName(value = "eventual")
+        EVENTUAL("eventual")
+        
+    }
+
     /**
      * List Identities
      * Lists all [identities](https://www.ory.sh/docs/kratos/concepts/identity-user-model) in the system.
-     * @param perPage Items per Page  This is the number of items per page. (optional, default to 250L)
-     * @param page Pagination Page  This value is currently an integer, but it is not sequential. The value is not the page number, but a reference. The next page can be any number and some numbers might return an empty list.  For example, page 2 might not follow after page 1. And even if page 3 and 5 exist, but page 4 might not exist. (optional, default to 1L)
-     * @param credentialsIdentifier CredentialsIdentifier is the identifier (username, email) of the credentials to look up. (optional)
+     * @param perPage Deprecated Items per Page  DEPRECATED: Please use &#x60;page_token&#x60; instead. This parameter will be removed in the future.  This is the number of items per page. (optional, default to 250L)
+     * @param page Deprecated Pagination Page  DEPRECATED: Please use &#x60;page_token&#x60; instead. This parameter will be removed in the future.  This value is currently an integer, but it is not sequential. The value is not the page number, but a reference. The next page can be any number and some numbers might return an empty list.  For example, page 2 might not follow after page 1. And even if page 3 and 5 exist, but page 4 might not exist. The first page can be retrieved by omitting this parameter. Following page pointers will be returned in the &#x60;Link&#x60; header. (optional)
+     * @param pageSize Page Size  This is the number of items per page to return. For details on pagination please head over to the [pagination documentation](https://www.ory.sh/docs/ecosystem/api-design#pagination). (optional, default to 250L)
+     * @param pageToken Next Page Token  The next page token. For details on pagination please head over to the [pagination documentation](https://www.ory.sh/docs/ecosystem/api-design#pagination). (optional, default to "1")
+     * @param consistency Read Consistency Level (preview)  The read consistency level determines the consistency guarantee for reads:  strong (slow): The read is guaranteed to return the most recent data committed at the start of the read. eventual (very fast): The result will return data that is about 4.8 seconds old.  The default consistency guarantee can be changed in the Ory Network Console or using the Ory CLI with &#x60;ory patch project --replace &#39;/previews/default_read_consistency_level&#x3D;\&quot;strong\&quot;&#39;&#x60;.  Setting the default consistency level to &#x60;eventual&#x60; may cause regressions in the future as we add consistency controls to more APIs. Currently, the following APIs will be affected by this setting:  &#x60;GET /admin/identities&#x60;  This feature is in preview and only available in Ory Network.  ConsistencyLevelUnset  ConsistencyLevelUnset is the unset / default consistency level. strong ConsistencyLevelStrong  ConsistencyLevelStrong is the strong consistency level. eventual ConsistencyLevelEventual  ConsistencyLevelEventual is the eventual consistency level using follower read timestamps. (optional)
+     * @param ids List of ids used to filter identities. If this list is empty, then no filter will be applied. (optional)
+     * @param credentialsIdentifier CredentialsIdentifier is the identifier (username, email) of the credentials to look up using exact match. Only one of CredentialsIdentifier and CredentialsIdentifierSimilar can be used. (optional)
+     * @param previewCredentialsIdentifierSimilar This is an EXPERIMENTAL parameter that WILL CHANGE. Do NOT rely on consistent, deterministic behavior. THIS PARAMETER WILL BE REMOVED IN AN UPCOMING RELEASE WITHOUT ANY MIGRATION PATH.  CredentialsIdentifierSimilar is the (partial) identifier (username, email) of the credentials to look up using similarity search. Only one of CredentialsIdentifier and CredentialsIdentifierSimilar can be used. (optional)
+     * @param includeCredential Include Credentials in Response  Include any credential, for example &#x60;password&#x60; or &#x60;oidc&#x60;, in the response. When set to &#x60;oidc&#x60;, This will return the initial OAuth 2.0 Access Token, OAuth 2.0 Refresh Token and the OpenID Connect ID Token if available. (optional)
      * @return kotlin.Array<Identity>
      */
     @Suppress("UNCHECKED_CAST")
-    open suspend fun listIdentities(perPage: kotlin.Long? = 250L, page: kotlin.Long? = 1L, credentialsIdentifier: kotlin.String? = null): HttpResponse<kotlin.Array<Identity>> {
+    open suspend fun listIdentities(perPage: kotlin.Long? = 250L, page: kotlin.Long? = null, pageSize: kotlin.Long? = 250L, pageToken: kotlin.String? = "1", consistency: ConsistencyListIdentities? = null, ids: kotlin.Array<kotlin.String>? = null, credentialsIdentifier: kotlin.String? = null, previewCredentialsIdentifierSimilar: kotlin.String? = null, includeCredential: kotlin.Array<kotlin.String>? = null): HttpResponse<kotlin.Array<Identity>> {
 
         val localVariableAuthNames = listOf<String>("oryAccessToken")
 
@@ -521,7 +589,13 @@ open class IdentityApi : ApiClient {
         val localVariableQuery = mutableMapOf<String, List<String>>()
         perPage?.apply { localVariableQuery["per_page"] = listOf("$perPage") }
         page?.apply { localVariableQuery["page"] = listOf("$page") }
+        pageSize?.apply { localVariableQuery["page_size"] = listOf("$pageSize") }
+        pageToken?.apply { localVariableQuery["page_token"] = listOf("$pageToken") }
+        consistency?.apply { localVariableQuery["consistency"] = listOf("$consistency") }
+        ids?.apply { localVariableQuery["ids"] = toMultiValue(this, "multi") }
         credentialsIdentifier?.apply { localVariableQuery["credentials_identifier"] = listOf("$credentialsIdentifier") }
+        previewCredentialsIdentifierSimilar?.apply { localVariableQuery["preview_credentials_identifier_similar"] = listOf("$previewCredentialsIdentifierSimilar") }
+        includeCredential?.apply { localVariableQuery["include_credential"] = toMultiValue(this, "multi") }
         val localVariableHeaders = mutableMapOf<String, String>()
 
         val localVariableConfig = RequestConfig<kotlin.Any?>(
@@ -552,12 +626,14 @@ open class IdentityApi : ApiClient {
     /**
      * Get all Identity Schemas
      * Returns a list of all identity schemas currently in use.
-     * @param perPage Items per Page  This is the number of items per page. (optional, default to 250L)
-     * @param page Pagination Page  This value is currently an integer, but it is not sequential. The value is not the page number, but a reference. The next page can be any number and some numbers might return an empty list.  For example, page 2 might not follow after page 1. And even if page 3 and 5 exist, but page 4 might not exist. (optional, default to 1L)
+     * @param perPage Deprecated Items per Page  DEPRECATED: Please use &#x60;page_token&#x60; instead. This parameter will be removed in the future.  This is the number of items per page. (optional, default to 250L)
+     * @param page Deprecated Pagination Page  DEPRECATED: Please use &#x60;page_token&#x60; instead. This parameter will be removed in the future.  This value is currently an integer, but it is not sequential. The value is not the page number, but a reference. The next page can be any number and some numbers might return an empty list.  For example, page 2 might not follow after page 1. And even if page 3 and 5 exist, but page 4 might not exist. The first page can be retrieved by omitting this parameter. Following page pointers will be returned in the &#x60;Link&#x60; header. (optional)
+     * @param pageSize Page Size  This is the number of items per page to return. For details on pagination please head over to the [pagination documentation](https://www.ory.sh/docs/ecosystem/api-design#pagination). (optional, default to 250L)
+     * @param pageToken Next Page Token  The next page token. For details on pagination please head over to the [pagination documentation](https://www.ory.sh/docs/ecosystem/api-design#pagination). (optional, default to "1")
      * @return kotlin.Array<IdentitySchemaContainer>
      */
     @Suppress("UNCHECKED_CAST")
-    open suspend fun listIdentitySchemas(perPage: kotlin.Long? = 250L, page: kotlin.Long? = 1L): HttpResponse<kotlin.Array<IdentitySchemaContainer>> {
+    open suspend fun listIdentitySchemas(perPage: kotlin.Long? = 250L, page: kotlin.Long? = null, pageSize: kotlin.Long? = 250L, pageToken: kotlin.String? = "1"): HttpResponse<kotlin.Array<IdentitySchemaContainer>> {
 
         val localVariableAuthNames = listOf<String>()
 
@@ -567,6 +643,8 @@ open class IdentityApi : ApiClient {
         val localVariableQuery = mutableMapOf<String, List<String>>()
         perPage?.apply { localVariableQuery["per_page"] = listOf("$perPage") }
         page?.apply { localVariableQuery["page"] = listOf("$page") }
+        pageSize?.apply { localVariableQuery["page_size"] = listOf("$pageSize") }
+        pageToken?.apply { localVariableQuery["page_token"] = listOf("$pageToken") }
         val localVariableHeaders = mutableMapOf<String, String>()
 
         val localVariableConfig = RequestConfig<kotlin.Any?>(
@@ -598,13 +676,15 @@ open class IdentityApi : ApiClient {
      * List an Identity&#39;s Sessions
      * This endpoint returns all sessions that belong to the given Identity.
      * @param id ID is the identity&#39;s ID.
-     * @param perPage Items per Page  This is the number of items per page. (optional, default to 250L)
-     * @param page Pagination Page  This value is currently an integer, but it is not sequential. The value is not the page number, but a reference. The next page can be any number and some numbers might return an empty list.  For example, page 2 might not follow after page 1. And even if page 3 and 5 exist, but page 4 might not exist. (optional, default to 1L)
+     * @param perPage Deprecated Items per Page  DEPRECATED: Please use &#x60;page_token&#x60; instead. This parameter will be removed in the future.  This is the number of items per page. (optional, default to 250L)
+     * @param page Deprecated Pagination Page  DEPRECATED: Please use &#x60;page_token&#x60; instead. This parameter will be removed in the future.  This value is currently an integer, but it is not sequential. The value is not the page number, but a reference. The next page can be any number and some numbers might return an empty list.  For example, page 2 might not follow after page 1. And even if page 3 and 5 exist, but page 4 might not exist. The first page can be retrieved by omitting this parameter. Following page pointers will be returned in the &#x60;Link&#x60; header. (optional)
+     * @param pageSize Page Size  This is the number of items per page to return. For details on pagination please head over to the [pagination documentation](https://www.ory.sh/docs/ecosystem/api-design#pagination). (optional, default to 250L)
+     * @param pageToken Next Page Token  The next page token. For details on pagination please head over to the [pagination documentation](https://www.ory.sh/docs/ecosystem/api-design#pagination). (optional, default to "1")
      * @param active Active is a boolean flag that filters out sessions based on the state. If no value is provided, all sessions are returned. (optional)
      * @return kotlin.Array<Session>
      */
     @Suppress("UNCHECKED_CAST")
-    open suspend fun listIdentitySessions(id: kotlin.String, perPage: kotlin.Long? = 250L, page: kotlin.Long? = 1L, active: kotlin.Boolean? = null): HttpResponse<kotlin.Array<Session>> {
+    open suspend fun listIdentitySessions(id: kotlin.String, perPage: kotlin.Long? = 250L, page: kotlin.Long? = null, pageSize: kotlin.Long? = 250L, pageToken: kotlin.String? = "1", active: kotlin.Boolean? = null): HttpResponse<kotlin.Array<Session>> {
 
         val localVariableAuthNames = listOf<String>("oryAccessToken")
 
@@ -614,6 +694,8 @@ open class IdentityApi : ApiClient {
         val localVariableQuery = mutableMapOf<String, List<String>>()
         perPage?.apply { localVariableQuery["per_page"] = listOf("$perPage") }
         page?.apply { localVariableQuery["page"] = listOf("$page") }
+        pageSize?.apply { localVariableQuery["page_size"] = listOf("$pageSize") }
+        pageToken?.apply { localVariableQuery["page_token"] = listOf("$pageToken") }
         active?.apply { localVariableQuery["active"] = listOf("$active") }
         val localVariableHeaders = mutableMapOf<String, String>()
 
@@ -648,6 +730,12 @@ open class IdentityApi : ApiClient {
      */
     @Serializable
     enum class ExpandListSessions(val value: kotlin.String) {
+        
+        @SerialName(value = "identity")
+        IDENTITY("identity"),
+        
+        @SerialName(value = "devices")
+        DEVICES("devices")
         
     }
 

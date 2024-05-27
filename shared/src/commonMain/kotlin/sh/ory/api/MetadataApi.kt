@@ -16,8 +16,6 @@
 package sh.ory.api
 
 import sh.ory.model.GetVersion200Response
-import sh.ory.model.IsAlive200Response
-import sh.ory.model.IsReady503Response
 
 import org.openapitools.client.infrastructure.*
 import io.ktor.client.HttpClient
@@ -52,7 +50,7 @@ open class MetadataApi : ApiClient {
     @Suppress("UNCHECKED_CAST")
     open suspend fun getVersion(): HttpResponse<GetVersion200Response> {
 
-        val localVariableAuthNames = listOf<String>()
+        val localVariableAuthNames = listOf<String>("oryAccessToken")
 
         val localVariableBody = 
             io.ktor.client.utils.EmptyContent
@@ -65,71 +63,7 @@ open class MetadataApi : ApiClient {
             "/version",
             query = localVariableQuery,
             headers = localVariableHeaders,
-            requiresAuthentication = false,
-        )
-
-        return request(
-            localVariableConfig,
-            localVariableBody,
-            localVariableAuthNames
-        ).wrap()
-    }
-
-
-    /**
-     * Check HTTP Server Status
-     * This endpoint returns a HTTP 200 status code when Ory Kratos is accepting incoming HTTP requests. This status does currently not include checks whether the database connection is working.  If the service supports TLS Edge Termination, this endpoint does not require the &#x60;X-Forwarded-Proto&#x60; header to be set.  Be aware that if you are running multiple nodes of this service, the health status will never refer to the cluster state, only to a single instance.
-     * @return IsAlive200Response
-     */
-    @Suppress("UNCHECKED_CAST")
-    open suspend fun isAlive(): HttpResponse<IsAlive200Response> {
-
-        val localVariableAuthNames = listOf<String>()
-
-        val localVariableBody = 
-            io.ktor.client.utils.EmptyContent
-
-        val localVariableQuery = mutableMapOf<String, List<String>>()
-        val localVariableHeaders = mutableMapOf<String, String>()
-
-        val localVariableConfig = RequestConfig<kotlin.Any?>(
-            RequestMethod.GET,
-            "/health/alive",
-            query = localVariableQuery,
-            headers = localVariableHeaders,
-            requiresAuthentication = false,
-        )
-
-        return request(
-            localVariableConfig,
-            localVariableBody,
-            localVariableAuthNames
-        ).wrap()
-    }
-
-
-    /**
-     * Check HTTP Server and Database Status
-     * This endpoint returns a HTTP 200 status code when Ory Kratos is up running and the environment dependencies (e.g. the database) are responsive as well.  If the service supports TLS Edge Termination, this endpoint does not require the &#x60;X-Forwarded-Proto&#x60; header to be set.  Be aware that if you are running multiple nodes of Ory Kratos, the health status will never refer to the cluster state, only to a single instance.
-     * @return IsAlive200Response
-     */
-    @Suppress("UNCHECKED_CAST")
-    open suspend fun isReady(): HttpResponse<IsAlive200Response> {
-
-        val localVariableAuthNames = listOf<String>()
-
-        val localVariableBody = 
-            io.ktor.client.utils.EmptyContent
-
-        val localVariableQuery = mutableMapOf<String, List<String>>()
-        val localVariableHeaders = mutableMapOf<String, String>()
-
-        val localVariableConfig = RequestConfig<kotlin.Any?>(
-            RequestMethod.GET,
-            "/health/ready",
-            query = localVariableQuery,
-            headers = localVariableHeaders,
-            requiresAuthentication = false,
+            requiresAuthentication = true,
         )
 
         return request(

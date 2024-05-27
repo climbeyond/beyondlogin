@@ -15,18 +15,20 @@
 
 package sh.ory.model
 
+import sh.ory.model.GenericErrorContent
 
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 /**
- * 
+ * Error responses are sent when an error (e.g. unauthorized, bad request, ...) occurred.
  *
  * @param message Error message  The error's message.
  * @param code The status code
  * @param debug Debug information  This field is often not exposed to protect against leaking sensitive information.
  * @param details Further error details
+ * @param error 
  * @param id The error ID  Useful when trying to identify various errors in application logic.
  * @param reason A human-readable reason for the error
  * @param request The request ID  The request ID is often exposed internally in order to trace errors across service architectures. This is often a UUID.
@@ -47,6 +49,8 @@ data class GenericError (
 
     /* Further error details */
     @SerialName(value = "details") val details: kotlin.String? = null,
+
+    @SerialName(value = "error") val error: GenericErrorContent? = null,
 
     /* The error ID  Useful when trying to identify various errors in application logic. */
     @SerialName(value = "id") val id: kotlin.String? = null,

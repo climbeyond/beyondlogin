@@ -19,7 +19,6 @@ package sh.ory.model
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
-import kotlinx.serialization.json.JsonObject
 
 /**
  * Update Registration Flow with Password Method
@@ -41,7 +40,7 @@ data class UpdateRegistrationFlowWithPasswordMethod (
     @SerialName(value = "password") @Required val password: kotlin.String,
 
     /* The identity's traits */
-    @SerialName(value = "traits") @Required val traits: JsonObject,
+    @SerialName(value = "traits") @Required val traits: kotlin.String,
 
     /* The CSRF Token */
     @SerialName(value = "csrf_token") val csrfToken: kotlin.String? = null,

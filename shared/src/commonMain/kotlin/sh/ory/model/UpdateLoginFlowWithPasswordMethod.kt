@@ -28,6 +28,7 @@ import kotlinx.serialization.encoding.*
  * @param password The user's password.
  * @param csrfToken Sending the anti-csrf token is only required for browser login flows.
  * @param passwordIdentifier Identifier is the email or username of the user trying to log in. This field is deprecated!
+ * @param transientPayload Transient data to pass along to any webhooks
  */
 @Serializable
 
@@ -46,7 +47,10 @@ data class UpdateLoginFlowWithPasswordMethod (
     @SerialName(value = "csrf_token") val csrfToken: kotlin.String? = null,
 
     /* Identifier is the email or username of the user trying to log in. This field is deprecated! */
-    @SerialName(value = "password_identifier") val passwordIdentifier: kotlin.String? = null
+    @SerialName(value = "password_identifier") val passwordIdentifier: kotlin.String? = null,
+
+    /* Transient data to pass along to any webhooks */
+    @SerialName(value = "transient_payload") val transientPayload: kotlin.String? = null
 
 )
 

@@ -28,20 +28,20 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import app.climbeyond.beyondlogin.ui.ControllerView
 import app.climbeyond.beyondlogin.BeyondLogin
 import app.climbeyond.beyondlogin.Session
 import app.climbeyond.beyondlogin.SessionInfo
 import app.climbeyond.beyondlogin.helpers.BLLogger
 import app.climbeyond.beyondlogin.helpers.Colors
 import app.climbeyond.beyondlogin.helpers.ToastBar
+import app.climbeyond.beyondlogin.ui.ControllerView
 import app.climbeyond.beyondlogin.ui.component.Elements
 import climbeyond.beyondlogin.generated.resources.Res
-import climbeyond.beyondlogin.generated.resources.beyond_login_field_email_fill
-import climbeyond.beyondlogin.generated.resources.beyond_login_field_password_fill
 import climbeyond.beyondlogin.generated.resources.beyond_login_arrow_back
 import climbeyond.beyondlogin.generated.resources.beyond_login_desc_show_password
 import climbeyond.beyondlogin.generated.resources.beyond_login_eye
+import climbeyond.beyondlogin.generated.resources.beyond_login_field_email_fill
+import climbeyond.beyondlogin.generated.resources.beyond_login_field_password_fill
 import climbeyond.beyondlogin.generated.resources.beyond_login_icon_email
 import climbeyond.beyondlogin.generated.resources.beyond_login_icon_lock
 import climbeyond.beyondlogin.generated.resources.beyond_login_navigate_back
@@ -51,18 +51,18 @@ import climbeyond.beyondlogin.generated.resources.beyond_login_register_has_acco
 import climbeyond.beyondlogin.generated.resources.beyond_login_register_has_account_login
 import climbeyond.beyondlogin.generated.resources.beyond_login_register_header
 import climbeyond.beyondlogin.generated.resources.beyond_login_register_password
-import climbeyond.beyondlogin.generated.resources.beyond_login_session_email
 import io.ktor.util.reflect.typeInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import sh.ory.model.RegistrationFlow
-import sh.ory.model.UpdateRegistrationFlowWithPasswordMethod
+import sh.ory.model.UpdateRegistrationFlowBody
 
 class RegisterView(private val self: BeyondLogin) : ControllerView.RequireView {
     private var errorMessage = mutableStateOf("")
@@ -70,6 +70,36 @@ class RegisterView(private val self: BeyondLogin) : ControllerView.RequireView {
 
     var email: String = ""
     var password: String = ""
+
+    @Serializable
+    data class RegistrationBody(
+            override val method: String,
+            override val password: String,
+            override val traits: String,
+            override val provider: String,
+    ) : UpdateRegistrationFlowBody {
+
+        override val csrfToken: String?
+            get() = null
+        override val transientPayload: String?
+            get() = null
+        override val idToken: String?
+            get() = null
+        override val idTokenNonce: String?
+            get() = null
+        override val upstreamParameters: String?
+            get() = null
+        override val webauthnRegister: String?
+            get() = null
+        override val webauthnRegisterDisplayname: String?
+            get() = null
+        override val code: String?
+            get() = null
+        override val resend: String?
+            get() = null
+        override val passkeyRegister: String?
+            get() = null
+    }
 
     @Composable
     override fun View() {
@@ -221,12 +251,13 @@ class RegisterView(private val self: BeyondLogin) : ControllerView.RequireView {
         // clear possible error
         errorMessage.value = ""
 
-        val method = UpdateRegistrationFlowWithPasswordMethod(
+        val method = RegistrationBody(
                 "password",
                 password,
                 JsonObject(HashMap<String, JsonElement>().apply {
                     put("email", JsonPrimitive(email))
-                })
+                }).toString(),
+                ""
         )
 
         coroutine.launch {

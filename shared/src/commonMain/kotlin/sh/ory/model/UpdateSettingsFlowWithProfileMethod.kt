@@ -26,6 +26,7 @@ import kotlinx.serialization.encoding.*
  * @param method Method  Should be set to profile when trying to update a profile.
  * @param traits Traits  The identity's traits.
  * @param csrfToken The Anti-CSRF Token  This token is only required when performing browser flows.
+ * @param transientPayload Transient data to pass along to any webhooks
  */
 @Serializable
 
@@ -38,7 +39,10 @@ data class UpdateSettingsFlowWithProfileMethod (
     @SerialName(value = "traits") @Required val traits: kotlin.String,
 
     /* The Anti-CSRF Token  This token is only required when performing browser flows. */
-    @SerialName(value = "csrf_token") val csrfToken: kotlin.String? = null
+    @SerialName(value = "csrf_token") val csrfToken: kotlin.String? = null,
+
+    /* Transient data to pass along to any webhooks */
+    @SerialName(value = "transient_payload") val transientPayload: kotlin.String? = null
 
 )
 

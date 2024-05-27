@@ -23,18 +23,18 @@ import kotlinx.serialization.encoding.*
 /**
  * 
  *
- * @param page Pagination Page  This value is currently an integer, but it is not sequential. The value is not the page number, but a reference. The next page can be any number and some numbers might return an empty list.  For example, page 2 might not follow after page 1. And even if page 3 and 5 exist, but page 4 might not exist.
- * @param perPage Items per Page  This is the number of items per page.
+ * @param pageSize Items per page  This is the number of items per page to return. For details on pagination please head over to the [pagination documentation](https://www.ory.sh/docs/ecosystem/api-design#pagination).
+ * @param pageToken Next Page Token  The next page token. For details on pagination please head over to the [pagination documentation](https://www.ory.sh/docs/ecosystem/api-design#pagination).
  */
 @Serializable
 
 data class Pagination (
 
-    /* Pagination Page  This value is currently an integer, but it is not sequential. The value is not the page number, but a reference. The next page can be any number and some numbers might return an empty list.  For example, page 2 might not follow after page 1. And even if page 3 and 5 exist, but page 4 might not exist. */
-    @SerialName(value = "page") val page: kotlin.Long? = 1L,
+    /* Items per page  This is the number of items per page to return. For details on pagination please head over to the [pagination documentation](https://www.ory.sh/docs/ecosystem/api-design#pagination). */
+    @SerialName(value = "page_size") val pageSize: kotlin.Long? = 250L,
 
-    /* Items per Page  This is the number of items per page. */
-    @SerialName(value = "per_page") val perPage: kotlin.Long? = 250L
+    /* Next Page Token  The next page token. For details on pagination please head over to the [pagination documentation](https://www.ory.sh/docs/ecosystem/api-design#pagination). */
+    @SerialName(value = "page_token") val pageToken: kotlin.String? = "1"
 
 )
 

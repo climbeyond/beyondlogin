@@ -34,7 +34,7 @@ import kotlinx.serialization.json.JsonObject
 data class JsonPatch (
 
     /* The operation to be performed. One of \"add\", \"remove\", \"replace\", \"move\", \"copy\", or \"test\". */
-    @SerialName(value = "op") @Required val op: kotlin.String,
+    @SerialName(value = "op") @Required val op: JsonPatch.Op,
 
     /* The path to the target path. Uses JSON pointer notation.  Learn more [about JSON Pointers](https://datatracker.ietf.org/doc/html/rfc6901#section-5). */
     @SerialName(value = "path") @Required val path: kotlin.String,
@@ -45,5 +45,21 @@ data class JsonPatch (
     /* The value to be used within the operations.  Learn more [about JSON Pointers](https://datatracker.ietf.org/doc/html/rfc6901#section-5). */
     @SerialName(value = "value") val `value`: JsonObject? = null
 
-)
+) {
+
+    /**
+     * The operation to be performed. One of \"add\", \"remove\", \"replace\", \"move\", \"copy\", or \"test\".
+     *
+     * Values: ADD,REMOVE,REPLACE,MOVE,COPY,TEST
+     */
+    @Serializable
+    enum class Op(val value: kotlin.String) {
+        @SerialName(value = "add") ADD("add"),
+        @SerialName(value = "remove") REMOVE("remove"),
+        @SerialName(value = "replace") REPLACE("replace"),
+        @SerialName(value = "move") MOVE("move"),
+        @SerialName(value = "copy") COPY("copy"),
+        @SerialName(value = "test") TEST("test");
+    }
+}
 

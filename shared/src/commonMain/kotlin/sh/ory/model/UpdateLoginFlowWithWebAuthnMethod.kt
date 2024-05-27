@@ -26,6 +26,7 @@ import kotlinx.serialization.encoding.*
  * @param identifier Identifier is the email or username of the user trying to log in.
  * @param method Method should be set to \"webAuthn\" when logging in using the WebAuthn strategy.
  * @param csrfToken Sending the anti-csrf token is only required for browser login flows.
+ * @param transientPayload Transient data to pass along to any webhooks
  * @param webauthnLogin Login a WebAuthn Security Key  This must contain the ID of the WebAuthN connection.
  */
 @Serializable
@@ -40,6 +41,9 @@ data class UpdateLoginFlowWithWebAuthnMethod (
 
     /* Sending the anti-csrf token is only required for browser login flows. */
     @SerialName(value = "csrf_token") val csrfToken: kotlin.String? = null,
+
+    /* Transient data to pass along to any webhooks */
+    @SerialName(value = "transient_payload") val transientPayload: kotlin.String? = null,
 
     /* Login a WebAuthn Security Key  This must contain the ID of the WebAuthN connection. */
     @SerialName(value = "webauthn_login") val webauthnLogin: kotlin.String? = null

@@ -26,6 +26,7 @@ import kotlinx.serialization.encoding.*
  * @param initialAccessToken 
  * @param initialIdToken 
  * @param initialRefreshToken 
+ * @param organization 
  * @param provider 
  * @param subject 
  */
@@ -38,6 +39,8 @@ data class IdentityCredentialsOidcProvider (
     @SerialName(value = "initial_id_token") val initialIdToken: kotlin.String? = null,
 
     @SerialName(value = "initial_refresh_token") val initialRefreshToken: kotlin.String? = null,
+
+    @SerialName(value = "organization") val organization: kotlin.String? = null,
 
     @SerialName(value = "provider") val provider: kotlin.String? = null,
 

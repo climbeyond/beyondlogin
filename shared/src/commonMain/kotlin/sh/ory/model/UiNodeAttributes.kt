@@ -31,7 +31,7 @@ import kotlinx.serialization.encoding.*
  *
  * @param disabled Sets the input's disabled field to true or false.
  * @param name The input's element name.
- * @param nodeType NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0. In this struct it technically always is \"script\".
+ * @param nodeType NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0. In this struct it technically always is \"script\". text Text input Input img Image a Anchor script Script
  * @param type The script MIME type
  * @param id A unique identifier
  * @param text 
@@ -48,6 +48,7 @@ import kotlinx.serialization.encoding.*
  * @param autocomplete The autocomplete attribute for the input. email InputAttributeAutocompleteEmail tel InputAttributeAutocompleteTel url InputAttributeAutocompleteUrl current-password InputAttributeAutocompleteCurrentPassword new-password InputAttributeAutocompleteNewPassword one-time-code InputAttributeAutocompleteOneTimeCode
  * @param label 
  * @param onclick OnClick may contain javascript which should be executed on click. This is primarily used for WebAuthn.
+ * @param onload OnLoad may contain javascript which should be executed on load. This is primarily used for WebAuthn.
  * @param pattern The input's pattern.
  * @param required Mark this input field as required.
  * @param `value` The input's value.
@@ -91,12 +92,27 @@ interface UiNodeAttributes {
     @SerialName(value = "label") val label: UiText?
     /* OnClick may contain javascript which should be executed on click. This is primarily used for WebAuthn. */
     @SerialName(value = "onclick") val onclick: kotlin.String?
+    /* OnLoad may contain javascript which should be executed on load. This is primarily used for WebAuthn. */
+    @SerialName(value = "onload") val onload: kotlin.String?
     /* The input's pattern. */
     @SerialName(value = "pattern") val pattern: kotlin.String?
     /* Mark this input field as required. */
     @SerialName(value = "required") val required: kotlin.Boolean?
     /* The input's value. */
     @SerialName(value = "value") val `value`: kotlin.String?
+    /**
+     * NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0. In this struct it technically always is \"script\". text Text input Input img Image a Anchor script Script
+     *
+     * Values: TEXT,INPUT,IMG,A,SCRIPT
+     */
+    @Serializable
+    enum class NodeType(val value: kotlin.String) {
+        @SerialName(value = "text") TEXT("text"),
+        @SerialName(value = "input") INPUT("input"),
+        @SerialName(value = "img") IMG("img"),
+        @SerialName(value = "a") A("a"),
+        @SerialName(value = "script") SCRIPT("script");
+    }
     /**
      * The autocomplete attribute for the input. email InputAttributeAutocompleteEmail tel InputAttributeAutocompleteTel url InputAttributeAutocompleteUrl current-password InputAttributeAutocompleteCurrentPassword new-password InputAttributeAutocompleteNewPassword one-time-code InputAttributeAutocompleteOneTimeCode
      *

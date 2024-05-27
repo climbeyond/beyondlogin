@@ -15,7 +15,6 @@
 
 package sh.ory.model
 
-import sh.ory.model.IdentityCredentialsType
 
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
@@ -27,7 +26,7 @@ import kotlinx.serialization.encoding.*
  * @param config 
  * @param createdAt CreatedAt is a helper struct field for gobuffalo.pop.
  * @param identifiers Identifiers represents a list of unique identifiers this credential type matches.
- * @param type 
+ * @param type Type discriminates between different types of credentials. password CredentialsTypePassword oidc CredentialsTypeOIDC totp CredentialsTypeTOTP lookup_secret CredentialsTypeLookup webauthn CredentialsTypeWebAuthn code CredentialsTypeCodeAuth passkey CredentialsTypePasskey profile CredentialsTypeProfile link_recovery CredentialsTypeRecoveryLink  CredentialsTypeRecoveryLink is a special credential type linked to the link strategy (recovery flow).  It is not used within the credentials object itself. code_recovery CredentialsTypeRecoveryCode
  * @param updatedAt UpdatedAt is a helper struct field for gobuffalo.pop.
  * @param version Version refers to the version of the credential. Useful when changing the config schema.
  */
@@ -43,7 +42,8 @@ data class IdentityCredentials (
     /* Identifiers represents a list of unique identifiers this credential type matches. */
     @SerialName(value = "identifiers") val identifiers: kotlin.Array<kotlin.String>? = null,
 
-    @SerialName(value = "type") val type: IdentityCredentialsType? = null,
+    /* Type discriminates between different types of credentials. password CredentialsTypePassword oidc CredentialsTypeOIDC totp CredentialsTypeTOTP lookup_secret CredentialsTypeLookup webauthn CredentialsTypeWebAuthn code CredentialsTypeCodeAuth passkey CredentialsTypePasskey profile CredentialsTypeProfile link_recovery CredentialsTypeRecoveryLink  CredentialsTypeRecoveryLink is a special credential type linked to the link strategy (recovery flow).  It is not used within the credentials object itself. code_recovery CredentialsTypeRecoveryCode */
+    @SerialName(value = "type") val type: IdentityCredentials.Type? = null,
 
     /* UpdatedAt is a helper struct field for gobuffalo.pop. */
     @SerialName(value = "updated_at") val updatedAt: kotlinx.datetime.Instant? = null,
@@ -51,5 +51,25 @@ data class IdentityCredentials (
     /* Version refers to the version of the credential. Useful when changing the config schema. */
     @SerialName(value = "version") val version: kotlin.Long? = null
 
-)
+) {
+
+    /**
+     * Type discriminates between different types of credentials. password CredentialsTypePassword oidc CredentialsTypeOIDC totp CredentialsTypeTOTP lookup_secret CredentialsTypeLookup webauthn CredentialsTypeWebAuthn code CredentialsTypeCodeAuth passkey CredentialsTypePasskey profile CredentialsTypeProfile link_recovery CredentialsTypeRecoveryLink  CredentialsTypeRecoveryLink is a special credential type linked to the link strategy (recovery flow).  It is not used within the credentials object itself. code_recovery CredentialsTypeRecoveryCode
+     *
+     * Values: PASSWORD,OIDC,TOTP,LOOKUP_SECRET,WEBAUTHN,CODE,PASSKEY,PROFILE,LINK_RECOVERY,CODE_RECOVERY
+     */
+    @Serializable
+    enum class Type(val value: kotlin.String) {
+        @SerialName(value = "password") PASSWORD("password"),
+        @SerialName(value = "oidc") OIDC("oidc"),
+        @SerialName(value = "totp") TOTP("totp"),
+        @SerialName(value = "lookup_secret") LOOKUP_SECRET("lookup_secret"),
+        @SerialName(value = "webauthn") WEBAUTHN("webauthn"),
+        @SerialName(value = "code") CODE("code"),
+        @SerialName(value = "passkey") PASSKEY("passkey"),
+        @SerialName(value = "profile") PROFILE("profile"),
+        @SerialName(value = "link_recovery") LINK_RECOVERY("link_recovery"),
+        @SerialName(value = "code_recovery") CODE_RECOVERY("code_recovery");
+    }
+}
 

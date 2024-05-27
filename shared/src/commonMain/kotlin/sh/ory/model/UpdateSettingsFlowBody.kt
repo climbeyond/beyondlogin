@@ -17,6 +17,7 @@ package sh.ory.model
 
 import sh.ory.model.UpdateSettingsFlowWithLookupMethod
 import sh.ory.model.UpdateSettingsFlowWithOidcMethod
+import sh.ory.model.UpdateSettingsFlowWithPasskeyMethod
 import sh.ory.model.UpdateSettingsFlowWithPasswordMethod
 import sh.ory.model.UpdateSettingsFlowWithProfileMethod
 import sh.ory.model.UpdateSettingsFlowWithTotpMethod
@@ -29,10 +30,11 @@ import kotlinx.serialization.encoding.*
 /**
  * Update Settings Flow Request Body
  *
- * @param method Method  Should be set to \"lookup\" when trying to add, update, or remove a lookup pairing.
+ * @param method Method  Should be set to \"passkey\" when trying to add, update, or remove a webAuthn pairing.
  * @param password Password is the updated password
  * @param traits The identity's traits  in: body
  * @param csrfToken CSRFToken is the anti-CSRF token
+ * @param transientPayload Transient data to pass along to any webhooks
  * @param flow Flow ID is the flow's ID.  in: query
  * @param link Link this provider  Either this or `unlink` must be set.  type: string in: body
  * @param unlink Unlink this provider  Either this or `link` must be set.  type: string in: body
@@ -46,12 +48,14 @@ import kotlinx.serialization.encoding.*
  * @param lookupSecretDisable Disables this method if true.
  * @param lookupSecretRegenerate If set to true will regenerate the lookup secrets
  * @param lookupSecretReveal If set to true will reveal the lookup secrets
+ * @param passkeyRemove Remove a WebAuthn Security Key  This must contain the ID of the WebAuthN connection.
+ * @param passkeySettingsRegister Register a WebAuthn Security Key  It is expected that the JSON returned by the WebAuthn registration process is included here.
  */
 
 
 interface UpdateSettingsFlowBody {
 
-    /* Method  Should be set to \"lookup\" when trying to add, update, or remove a lookup pairing. */
+    /* Method  Should be set to \"passkey\" when trying to add, update, or remove a webAuthn pairing. */
     @SerialName(value = "method") @Required val method: kotlin.String
     /* Password is the updated password */
     @SerialName(value = "password") @Required val password: kotlin.String
@@ -59,6 +63,8 @@ interface UpdateSettingsFlowBody {
     @SerialName(value = "traits") @Required val traits: kotlin.String
     /* CSRFToken is the anti-CSRF token */
     @SerialName(value = "csrf_token") val csrfToken: kotlin.String?
+    /* Transient data to pass along to any webhooks */
+    @SerialName(value = "transient_payload") val transientPayload: kotlin.String?
     /* Flow ID is the flow's ID.  in: query */
     @SerialName(value = "flow") val flow: kotlin.String?
     /* Link this provider  Either this or `unlink` must be set.  type: string in: body */
@@ -85,5 +91,9 @@ interface UpdateSettingsFlowBody {
     @SerialName(value = "lookup_secret_regenerate") val lookupSecretRegenerate: kotlin.Boolean?
     /* If set to true will reveal the lookup secrets */
     @SerialName(value = "lookup_secret_reveal") val lookupSecretReveal: kotlin.Boolean?
+    /* Remove a WebAuthn Security Key  This must contain the ID of the WebAuthN connection. */
+    @SerialName(value = "passkey_remove") val passkeyRemove: kotlin.String?
+    /* Register a WebAuthn Security Key  It is expected that the JSON returned by the WebAuthn registration process is included here. */
+    @SerialName(value = "passkey_settings_register") val passkeySettingsRegister: kotlin.String?
 }
 

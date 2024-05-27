@@ -15,6 +15,7 @@
 
 package sh.ory.model
 
+import sh.ory.model.ContinueWith
 import sh.ory.model.Session
 
 import kotlinx.serialization.*
@@ -25,6 +26,7 @@ import kotlinx.serialization.encoding.*
  * The Response for Login Flows via API
  *
  * @param session 
+ * @param continueWith Contains a list of actions, that could follow this flow  It can, for example, this will contain a reference to the verification flow, created as part of the user's registration or the token of the session.
  * @param sessionToken The Session Token  A session token is equivalent to a session cookie, but it can be sent in the HTTP Authorization Header:  Authorization: bearer ${session-token}  The session token is only issued for API flows, not for Browser flows!
  */
 @Serializable
@@ -32,6 +34,9 @@ import kotlinx.serialization.encoding.*
 data class SuccessfulNativeLogin (
 
     @SerialName(value = "session") @Required val session: Session,
+
+    /* Contains a list of actions, that could follow this flow  It can, for example, this will contain a reference to the verification flow, created as part of the user's registration or the token of the session. */
+    @SerialName(value = "continue_with") val continueWith: kotlin.Array<ContinueWith>? = null,
 
     /* The Session Token  A session token is equivalent to a session cookie, but it can be sent in the HTTP Authorization Header:  Authorization: bearer ${session-token}  The session token is only issued for API flows, not for Browser flows! */
     @SerialName(value = "session_token") val sessionToken: kotlin.String? = null

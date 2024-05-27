@@ -25,7 +25,7 @@ import kotlinx.serialization.encoding.*
  *
  * @param height Height of the image
  * @param id A unique identifier
- * @param nodeType NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is \"img\".
+ * @param nodeType NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is \"img\". text Text input Input img Image a Anchor script Script
  * @param src The image's source URL.  format: uri
  * @param width Width of the image
  */
@@ -39,8 +39,8 @@ data class UiNodeImageAttributes (
     /* A unique identifier */
     @SerialName(value = "id") @Required val id: kotlin.String,
 
-    /* NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is \"img\". */
-    @SerialName(value = "node_type") @Required val nodeType: kotlin.String,
+    /* NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is \"img\". text Text input Input img Image a Anchor script Script */
+    @SerialName(value = "node_type") @Required val nodeType: UiNodeImageAttributes.NodeType,
 
     /* The image's source URL.  format: uri */
     @SerialName(value = "src") @Required val src: kotlin.String,
@@ -48,5 +48,20 @@ data class UiNodeImageAttributes (
     /* Width of the image */
     @SerialName(value = "width") @Required val width: kotlin.Long
 
-)
+) {
+
+    /**
+     * NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is \"img\". text Text input Input img Image a Anchor script Script
+     *
+     * Values: TEXT,INPUT,IMG,A,SCRIPT
+     */
+    @Serializable
+    enum class NodeType(val value: kotlin.String) {
+        @SerialName(value = "text") TEXT("text"),
+        @SerialName(value = "input") INPUT("input"),
+        @SerialName(value = "img") IMG("img"),
+        @SerialName(value = "a") A("a"),
+        @SerialName(value = "script") SCRIPT("script");
+    }
+}
 

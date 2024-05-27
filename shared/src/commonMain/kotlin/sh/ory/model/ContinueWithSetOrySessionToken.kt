@@ -23,14 +23,14 @@ import kotlinx.serialization.encoding.*
 /**
  * Indicates that a session was issued, and the application should use this token for authenticated requests
  *
- * @param action Action will always be `set_ory_session_token` set_ory_session_token ContinueWithActionSetOrySessionToken show_verification_ui ContinueWithActionShowVerificationUI
+ * @param action Action will always be `set_ory_session_token` set_ory_session_token ContinueWithActionSetOrySessionTokenString
  * @param orySessionToken Token is the token of the session
  */
 @Serializable
 
 data class ContinueWithSetOrySessionToken (
 
-    /* Action will always be `set_ory_session_token` set_ory_session_token ContinueWithActionSetOrySessionToken show_verification_ui ContinueWithActionShowVerificationUI */
+    /* Action will always be `set_ory_session_token` set_ory_session_token ContinueWithActionSetOrySessionTokenString */
     @SerialName(value = "action") @Required val action: ContinueWithSetOrySessionToken.Action,
 
     /* Token is the token of the session */
@@ -39,14 +39,13 @@ data class ContinueWithSetOrySessionToken (
 ) {
 
     /**
-     * Action will always be `set_ory_session_token` set_ory_session_token ContinueWithActionSetOrySessionToken show_verification_ui ContinueWithActionShowVerificationUI
+     * Action will always be `set_ory_session_token` set_ory_session_token ContinueWithActionSetOrySessionTokenString
      *
-     * Values: SET_ORY_SESSION_TOKEN,SHOW_VERIFICATION_UI
+     * Values: SET_ORY_SESSION_TOKEN
      */
     @Serializable
     enum class Action(val value: kotlin.String) {
-        @SerialName(value = "set_ory_session_token") SET_ORY_SESSION_TOKEN("set_ory_session_token"),
-        @SerialName(value = "show_verification_ui") SHOW_VERIFICATION_UI("show_verification_ui");
+        @SerialName(value = "set_ory_session_token") SET_ORY_SESSION_TOKEN("set_ory_session_token");
     }
 }
 

@@ -27,6 +27,7 @@ import kotlinx.serialization.encoding.*
  * @param aal 
  * @param completedAt When the authentication challenge was completed.
  * @param method 
+ * @param organization The Organization id used for authentication
  * @param provider OIDC or SAML provider id used for authentication
  */
 @Serializable
@@ -40,6 +41,9 @@ data class SessionAuthenticationMethod (
 
     @SerialName(value = "method") val method: SessionAuthenticationMethod.Method? = null,
 
+    /* The Organization id used for authentication */
+    @SerialName(value = "organization") val organization: kotlin.String? = null,
+
     /* OIDC or SAML provider id used for authentication */
     @SerialName(value = "provider") val provider: kotlin.String? = null
 
@@ -48,13 +52,14 @@ data class SessionAuthenticationMethod (
     /**
      * 
      *
-     * Values: LINK_RECOVERY,CODE_RECOVERY,PASSWORD,TOTP,OIDC,WEBAUTHN,LOOKUP_SECRET,V0_PERIOD6_LEGACY_SESSION
+     * Values: LINK_RECOVERY,CODE_RECOVERY,PASSWORD,CODE,TOTP,OIDC,WEBAUTHN,LOOKUP_SECRET,V0_PERIOD6_LEGACY_SESSION
      */
     @Serializable
     enum class Method(val value: kotlin.String) {
         @SerialName(value = "link_recovery") LINK_RECOVERY("link_recovery"),
         @SerialName(value = "code_recovery") CODE_RECOVERY("code_recovery"),
         @SerialName(value = "password") PASSWORD("password"),
+        @SerialName(value = "code") CODE("code"),
         @SerialName(value = "totp") TOTP("totp"),
         @SerialName(value = "oidc") OIDC("oidc"),
         @SerialName(value = "webauthn") WEBAUTHN("webauthn"),

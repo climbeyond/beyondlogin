@@ -51,7 +51,7 @@ class SessionView(private val self: BeyondLogin) : ControllerView.RequireView {
             accountId.value = session.id
             sessionExpire.value = session.expiresAt.toString()
             accountEmail.value =
-                session.identity.traits?.get("email")?.jsonPrimitive?.content ?: ""
+                session.identity?.traits?.get("email")?.jsonPrimitive?.content ?: ""
 
         } ?: run {
             BLLogger.logError("SessionView - session not found")

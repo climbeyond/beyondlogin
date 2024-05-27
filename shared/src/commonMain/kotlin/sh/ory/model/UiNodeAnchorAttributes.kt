@@ -26,7 +26,7 @@ import kotlinx.serialization.encoding.*
  *
  * @param href The link's href (destination) URL.  format: uri
  * @param id A unique identifier
- * @param nodeType NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is \"a\".
+ * @param nodeType NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is \"a\". text Text input Input img Image a Anchor script Script
  * @param title 
  */
 @Serializable
@@ -39,10 +39,25 @@ data class UiNodeAnchorAttributes (
     /* A unique identifier */
     @SerialName(value = "id") @Required val id: kotlin.String,
 
-    /* NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is \"a\". */
-    @SerialName(value = "node_type") @Required val nodeType: kotlin.String,
+    /* NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is \"a\". text Text input Input img Image a Anchor script Script */
+    @SerialName(value = "node_type") @Required val nodeType: UiNodeAnchorAttributes.NodeType,
 
     @SerialName(value = "title") @Required val title: UiText
 
-)
+) {
+
+    /**
+     * NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is \"a\". text Text input Input img Image a Anchor script Script
+     *
+     * Values: TEXT,INPUT,IMG,A,SCRIPT
+     */
+    @Serializable
+    enum class NodeType(val value: kotlin.String) {
+        @SerialName(value = "text") TEXT("text"),
+        @SerialName(value = "input") INPUT("input"),
+        @SerialName(value = "img") IMG("img"),
+        @SerialName(value = "a") A("a"),
+        @SerialName(value = "script") SCRIPT("script");
+    }
+}
 

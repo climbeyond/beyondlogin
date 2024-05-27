@@ -181,7 +181,7 @@ internal object Session {
     internal fun storeSave(platform: BeyondLoginPlatform, token: String, session: Session) {
         SharedPreferenceManager.write(platform, BEYOND_LOGIN_SESSION_ID, session.id)
         SharedPreferenceManager.write(platform, BEYOND_LOGIN_SESSION_TOKEN, token)
-        SharedPreferenceManager.write(platform, BEYOND_LOGIN_SESSION_IDENTITY_ID, session.identity.id)
+        SharedPreferenceManager.write(platform, BEYOND_LOGIN_SESSION_IDENTITY_ID, session.identity?.id ?: "--")
         session.expiresAt?.let {
             SharedPreferenceManager.writeLong(platform, BEYOND_LOGIN_SESSION_EXPIRE,
                     it.toEpochMilliseconds())

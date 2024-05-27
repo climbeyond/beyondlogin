@@ -15,11 +15,7 @@
 
 package sh.ory.model
 
-import sh.ory.model.UiText
-
 import kotlinx.serialization.*
-import kotlinx.serialization.descriptors.*
-import kotlinx.serialization.encoding.*
 import kotlinx.serialization.json.JsonObject
 
 /**
@@ -27,18 +23,18 @@ import kotlinx.serialization.json.JsonObject
  *
  * @param disabled Sets the input's disabled field to true or false.
  * @param name The input's element name.
- * @param nodeType NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is \"input\".
+ * @param nodeType NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is \"input\". text Text input Input img Image a Anchor script Script
  * @param type The input's element type. text InputAttributeTypeText password InputAttributeTypePassword number InputAttributeTypeNumber checkbox InputAttributeTypeCheckbox hidden InputAttributeTypeHidden email InputAttributeTypeEmail tel InputAttributeTypeTel submit InputAttributeTypeSubmit button InputAttributeTypeButton datetime-local InputAttributeTypeDateTimeLocal date InputAttributeTypeDate url InputAttributeTypeURI
  * @param autocomplete The autocomplete attribute for the input. email InputAttributeAutocompleteEmail tel InputAttributeAutocompleteTel url InputAttributeAutocompleteUrl current-password InputAttributeAutocompleteCurrentPassword new-password InputAttributeAutocompleteNewPassword one-time-code InputAttributeAutocompleteOneTimeCode
  * @param label 
  * @param onclick OnClick may contain javascript which should be executed on click. This is primarily used for WebAuthn.
+ * @param onload OnLoad may contain javascript which should be executed on load. This is primarily used for WebAuthn.
  * @param pattern The input's pattern.
  * @param required Mark this input field as required.
  * @param `value` The input's value.
  */
 @Serializable
-
-data class UiNodeInputAttributes (
+sealed class UiNodeInputAttributes (
 
     /* Sets the input's disabled field to true or false. */
     @SerialName(value = "disabled") @Required val disabled: kotlin.Boolean,
@@ -46,11 +42,11 @@ data class UiNodeInputAttributes (
     /* The input's element name. */
     @SerialName(value = "name") @Required val name: kotlin.String,
 
-    /* NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is \"input\". */
-    @SerialName(value = "node_type") @Required val nodeType: kotlin.String,
+    /* NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is \"input\". text Text input Input img Image a Anchor script Script */
+    @SerialName(value = "node_type") @Required val nodeType: kotlin.String, // UiNodeInputAttributes.NodeType
 
     /* The input's element type. text InputAttributeTypeText password InputAttributeTypePassword number InputAttributeTypeNumber checkbox InputAttributeTypeCheckbox hidden InputAttributeTypeHidden email InputAttributeTypeEmail tel InputAttributeTypeTel submit InputAttributeTypeSubmit button InputAttributeTypeButton datetime-local InputAttributeTypeDateTimeLocal date InputAttributeTypeDate url InputAttributeTypeURI */
-    @SerialName(value = "type") @Required val type: UiNodeInputAttributes.Type,
+    //@SerialName(value = "type") @Required val type: kotlin.String, // UiNodeInputAttributes.Type
 
     /* The autocomplete attribute for the input. email InputAttributeAutocompleteEmail tel InputAttributeAutocompleteTel url InputAttributeAutocompleteUrl current-password InputAttributeAutocompleteCurrentPassword new-password InputAttributeAutocompleteNewPassword one-time-code InputAttributeAutocompleteOneTimeCode */
     @SerialName(value = "autocomplete") val autocomplete: UiNodeInputAttributes.Autocomplete? = null,
@@ -59,6 +55,9 @@ data class UiNodeInputAttributes (
 
     /* OnClick may contain javascript which should be executed on click. This is primarily used for WebAuthn. */
     @SerialName(value = "onclick") val onclick: kotlin.String? = null,
+
+    /* OnLoad may contain javascript which should be executed on load. This is primarily used for WebAuthn. */
+    @SerialName(value = "onload") val onload: kotlin.String? = null,
 
     /* The input's pattern. */
     @SerialName(value = "pattern") val pattern: kotlin.String? = null,
@@ -72,10 +71,26 @@ data class UiNodeInputAttributes (
 ) {
 
     /**
+     * NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is \"input\". text Text input Input img Image a Anchor script Script
+     *
+     * Values: TEXT,INPUT,IMG,A,SCRIPT
+     */
+/*
+    @Serializable
+    enum class NodeType(val value: kotlin.String) {
+        @SerialName(value = "text") TEXT("text"),
+        @SerialName(value = "input") INPUT("input"),
+        @SerialName(value = "img") IMG("img"),
+        @SerialName(value = "a") A("a"),
+        @SerialName(value = "script") SCRIPT("script");
+    }
+*/
+    /**
      * The input's element type. text InputAttributeTypeText password InputAttributeTypePassword number InputAttributeTypeNumber checkbox InputAttributeTypeCheckbox hidden InputAttributeTypeHidden email InputAttributeTypeEmail tel InputAttributeTypeTel submit InputAttributeTypeSubmit button InputAttributeTypeButton datetime-local InputAttributeTypeDateTimeLocal date InputAttributeTypeDate url InputAttributeTypeURI
      *
      * Values: TEXT,PASSWORD,NUMBER,CHECKBOX,HIDDEN,EMAIL,TEL,SUBMIT,BUTTON,DATETIME_MINUS_LOCAL,DATE,URL
      */
+/*
     @Serializable
     enum class Type(val value: kotlin.String) {
         @SerialName(value = "text") TEXT("text"),
@@ -91,6 +106,7 @@ data class UiNodeInputAttributes (
         @SerialName(value = "date") DATE("date"),
         @SerialName(value = "url") URL("url");
     }
+*/
     /**
      * The autocomplete attribute for the input. email InputAttributeAutocompleteEmail tel InputAttributeAutocompleteTel url InputAttributeAutocompleteUrl current-password InputAttributeAutocompleteCurrentPassword new-password InputAttributeAutocompleteNewPassword one-time-code InputAttributeAutocompleteOneTimeCode
      *

@@ -27,6 +27,7 @@ import kotlinx.serialization.encoding.*
  * @param csrfToken CSRFToken is the anti-CSRF token
  * @param totpCode ValidationTOTP must contain a valid TOTP based on the
  * @param totpUnlink UnlinkTOTP if true will remove the TOTP pairing, effectively removing the credential. This can be used to set up a new TOTP device.
+ * @param transientPayload Transient data to pass along to any webhooks
  */
 @Serializable
 
@@ -42,7 +43,10 @@ data class UpdateSettingsFlowWithTotpMethod (
     @SerialName(value = "totp_code") val totpCode: kotlin.String? = null,
 
     /* UnlinkTOTP if true will remove the TOTP pairing, effectively removing the credential. This can be used to set up a new TOTP device. */
-    @SerialName(value = "totp_unlink") val totpUnlink: kotlin.Boolean? = null
+    @SerialName(value = "totp_unlink") val totpUnlink: kotlin.Boolean? = null,
+
+    /* Transient data to pass along to any webhooks */
+    @SerialName(value = "transient_payload") val transientPayload: kotlin.String? = null
 
 )
 

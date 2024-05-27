@@ -25,7 +25,7 @@ import kotlinx.serialization.encoding.*
  * 
  *
  * @param id A unique identifier
- * @param nodeType NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is \"text\".
+ * @param nodeType NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is \"text\". text Text input Input img Image a Anchor script Script
  * @param text 
  */
 @Serializable
@@ -35,10 +35,25 @@ data class UiNodeTextAttributes (
     /* A unique identifier */
     @SerialName(value = "id") @Required val id: kotlin.String,
 
-    /* NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is \"text\". */
-    @SerialName(value = "node_type") @Required val nodeType: kotlin.String,
+    /* NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is \"text\". text Text input Input img Image a Anchor script Script */
+    @SerialName(value = "node_type") @Required val nodeType: UiNodeTextAttributes.NodeType,
 
     @SerialName(value = "text") @Required val text: UiText
 
-)
+) {
+
+    /**
+     * NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0.  In this struct it technically always is \"text\". text Text input Input img Image a Anchor script Script
+     *
+     * Values: TEXT,INPUT,IMG,A,SCRIPT
+     */
+    @Serializable
+    enum class NodeType(val value: kotlin.String) {
+        @SerialName(value = "text") TEXT("text"),
+        @SerialName(value = "input") INPUT("input"),
+        @SerialName(value = "img") IMG("img"),
+        @SerialName(value = "a") A("a"),
+        @SerialName(value = "script") SCRIPT("script");
+    }
+}
 

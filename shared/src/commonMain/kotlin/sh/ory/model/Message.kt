@@ -33,9 +33,10 @@ import kotlinx.serialization.encoding.*
  * @param sendCount 
  * @param status 
  * @param subject 
- * @param templateType  recovery_invalid TypeRecoveryInvalid recovery_valid TypeRecoveryValid recovery_code_invalid TypeRecoveryCodeInvalid recovery_code_valid TypeRecoveryCodeValid verification_invalid TypeVerificationInvalid verification_valid TypeVerificationValid verification_code_invalid TypeVerificationCodeInvalid verification_code_valid TypeVerificationCodeValid otp TypeOTP stub TypeTestStub
+ * @param templateType  recovery_invalid TypeRecoveryInvalid recovery_valid TypeRecoveryValid recovery_code_invalid TypeRecoveryCodeInvalid recovery_code_valid TypeRecoveryCodeValid verification_invalid TypeVerificationInvalid verification_valid TypeVerificationValid verification_code_invalid TypeVerificationCodeInvalid verification_code_valid TypeVerificationCodeValid stub TypeTestStub login_code_valid TypeLoginCodeValid registration_code_valid TypeRegistrationCodeValid
  * @param type 
  * @param updatedAt UpdatedAt is a helper struct field for gobuffalo.pop.
+ * @param channel 
  * @param dispatches Dispatches store information about the attempts of delivering a message May contain an error if any happened, or just the `success` state.
  */
 @Serializable
@@ -57,7 +58,7 @@ data class Message (
 
     @SerialName(value = "subject") @Required val subject: kotlin.String,
 
-    /*  recovery_invalid TypeRecoveryInvalid recovery_valid TypeRecoveryValid recovery_code_invalid TypeRecoveryCodeInvalid recovery_code_valid TypeRecoveryCodeValid verification_invalid TypeVerificationInvalid verification_valid TypeVerificationValid verification_code_invalid TypeVerificationCodeInvalid verification_code_valid TypeVerificationCodeValid otp TypeOTP stub TypeTestStub */
+    /*  recovery_invalid TypeRecoveryInvalid recovery_valid TypeRecoveryValid recovery_code_invalid TypeRecoveryCodeInvalid recovery_code_valid TypeRecoveryCodeValid verification_invalid TypeVerificationInvalid verification_valid TypeVerificationValid verification_code_invalid TypeVerificationCodeInvalid verification_code_valid TypeVerificationCodeValid stub TypeTestStub login_code_valid TypeLoginCodeValid registration_code_valid TypeRegistrationCodeValid */
     @SerialName(value = "template_type") @Required val templateType: Message.TemplateType,
 
     @SerialName(value = "type") @Required val type: CourierMessageType,
@@ -65,15 +66,17 @@ data class Message (
     /* UpdatedAt is a helper struct field for gobuffalo.pop. */
     @SerialName(value = "updated_at") @Required val updatedAt: kotlinx.datetime.Instant,
 
+    @SerialName(value = "channel") val channel: kotlin.String? = null,
+
     /* Dispatches store information about the attempts of delivering a message May contain an error if any happened, or just the `success` state. */
     @SerialName(value = "dispatches") val dispatches: kotlin.Array<MessageDispatch>? = null
 
 ) {
 
     /**
-     *  recovery_invalid TypeRecoveryInvalid recovery_valid TypeRecoveryValid recovery_code_invalid TypeRecoveryCodeInvalid recovery_code_valid TypeRecoveryCodeValid verification_invalid TypeVerificationInvalid verification_valid TypeVerificationValid verification_code_invalid TypeVerificationCodeInvalid verification_code_valid TypeVerificationCodeValid otp TypeOTP stub TypeTestStub
+     *  recovery_invalid TypeRecoveryInvalid recovery_valid TypeRecoveryValid recovery_code_invalid TypeRecoveryCodeInvalid recovery_code_valid TypeRecoveryCodeValid verification_invalid TypeVerificationInvalid verification_valid TypeVerificationValid verification_code_invalid TypeVerificationCodeInvalid verification_code_valid TypeVerificationCodeValid stub TypeTestStub login_code_valid TypeLoginCodeValid registration_code_valid TypeRegistrationCodeValid
      *
-     * Values: RECOVERY_INVALID,RECOVERY_VALID,RECOVERY_CODE_INVALID,RECOVERY_CODE_VALID,VERIFICATION_INVALID,VERIFICATION_VALID,VERIFICATION_CODE_INVALID,VERIFICATION_CODE_VALID,OTP,STUB
+     * Values: RECOVERY_INVALID,RECOVERY_VALID,RECOVERY_CODE_INVALID,RECOVERY_CODE_VALID,VERIFICATION_INVALID,VERIFICATION_VALID,VERIFICATION_CODE_INVALID,VERIFICATION_CODE_VALID,STUB,LOGIN_CODE_VALID,REGISTRATION_CODE_VALID
      */
     @Serializable
     enum class TemplateType(val value: kotlin.String) {
@@ -85,8 +88,9 @@ data class Message (
         @SerialName(value = "verification_valid") VERIFICATION_VALID("verification_valid"),
         @SerialName(value = "verification_code_invalid") VERIFICATION_CODE_INVALID("verification_code_invalid"),
         @SerialName(value = "verification_code_valid") VERIFICATION_CODE_VALID("verification_code_valid"),
-        @SerialName(value = "otp") OTP("otp"),
-        @SerialName(value = "stub") STUB("stub");
+        @SerialName(value = "stub") STUB("stub"),
+        @SerialName(value = "login_code_valid") LOGIN_CODE_VALID("login_code_valid"),
+        @SerialName(value = "registration_code_valid") REGISTRATION_CODE_VALID("registration_code_valid");
     }
 }
 

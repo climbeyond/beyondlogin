@@ -28,14 +28,15 @@ import kotlinx.serialization.encoding.*
  * A Session
  *
  * @param id Session ID
- * @param identity 
  * @param active Active state. If false the session is no longer active.
  * @param authenticatedAt The Session Authentication Timestamp  When this session was authenticated at. If multi-factor authentication was used this is the time when the last factor was authenticated (e.g. the TOTP code challenge was completed).
  * @param authenticationMethods A list of authenticators which were used to authenticate the session.
  * @param authenticatorAssuranceLevel 
  * @param devices Devices has history of all endpoints where the session was used
  * @param expiresAt The Session Expiry  When this session expires at.
+ * @param identity 
  * @param issuedAt The Session Issuance Timestamp  When this session was issued at. Usually equal or close to `authenticated_at`.
+ * @param tokenized Tokenized is the tokenized (e.g. JWT) version of the session.  It is only set when the `tokenize` query parameter was set to a valid tokenize template during calls to `/session/whoami`.
  */
 @Serializable
 
@@ -43,8 +44,6 @@ data class Session (
 
     /* Session ID */
     @SerialName(value = "id") @Required val id: kotlin.String,
-
-    @SerialName(value = "identity") @Required val identity: Identity,
 
     /* Active state. If false the session is no longer active. */
     @SerialName(value = "active") val active: kotlin.Boolean? = null,
@@ -63,8 +62,13 @@ data class Session (
     /* The Session Expiry  When this session expires at. */
     @SerialName(value = "expires_at") val expiresAt: kotlinx.datetime.Instant? = null,
 
+    @SerialName(value = "identity") val identity: Identity? = null,
+
     /* The Session Issuance Timestamp  When this session was issued at. Usually equal or close to `authenticated_at`. */
-    @SerialName(value = "issued_at") val issuedAt: kotlinx.datetime.Instant? = null
+    @SerialName(value = "issued_at") val issuedAt: kotlinx.datetime.Instant? = null,
+
+    /* Tokenized is the tokenized (e.g. JWT) version of the session.  It is only set when the `tokenize` query parameter was set to a valid tokenize template during calls to `/session/whoami`. */
+    @SerialName(value = "tokenized") val tokenized: kotlin.String? = null
 
 )
 

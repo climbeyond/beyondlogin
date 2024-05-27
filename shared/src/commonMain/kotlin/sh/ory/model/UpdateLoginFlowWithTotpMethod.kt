@@ -26,6 +26,7 @@ import kotlinx.serialization.encoding.*
  * @param method Method should be set to \"totp\" when logging in using the TOTP strategy.
  * @param totpCode The TOTP code.
  * @param csrfToken Sending the anti-csrf token is only required for browser login flows.
+ * @param transientPayload Transient data to pass along to any webhooks
  */
 @Serializable
 
@@ -38,7 +39,10 @@ data class UpdateLoginFlowWithTotpMethod (
     @SerialName(value = "totp_code") @Required val totpCode: kotlin.String,
 
     /* Sending the anti-csrf token is only required for browser login flows. */
-    @SerialName(value = "csrf_token") val csrfToken: kotlin.String? = null
+    @SerialName(value = "csrf_token") val csrfToken: kotlin.String? = null,
+
+    /* Transient data to pass along to any webhooks */
+    @SerialName(value = "transient_payload") val transientPayload: kotlin.String? = null
 
 )
 

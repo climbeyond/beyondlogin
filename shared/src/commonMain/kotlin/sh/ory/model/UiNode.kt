@@ -27,7 +27,7 @@ import kotlinx.serialization.encoding.*
  * Nodes are represented as HTML elements or their native UI equivalents. For example, a node can be an `<img>` tag, or an `<input element>` but also `some plain text`.
  *
  * @param attributes 
- * @param group Group specifies which group (e.g. password authenticator) this node belongs to. default DefaultGroup password PasswordGroup oidc OpenIDConnectGroup profile ProfileGroup link LinkGroup code CodeGroup totp TOTPGroup lookup_secret LookupGroup webauthn WebAuthnGroup
+ * @param group Group specifies which group (e.g. password authenticator) this node belongs to. default DefaultGroup password PasswordGroup oidc OpenIDConnectGroup profile ProfileGroup link LinkGroup code CodeGroup totp TOTPGroup lookup_secret LookupGroup webauthn WebAuthnGroup passkey PasskeyGroup
  * @param messages 
  * @param meta 
  * @param type The node's type text Text input Input img Image a Anchor script Script
@@ -38,7 +38,7 @@ data class UiNode (
 
     //@SerialName(value = "attributes") @Required val attributes: UiNodeAttributes,
 
-    /* Group specifies which group (e.g. password authenticator) this node belongs to. default DefaultGroup password PasswordGroup oidc OpenIDConnectGroup profile ProfileGroup link LinkGroup code CodeGroup totp TOTPGroup lookup_secret LookupGroup webauthn WebAuthnGroup */
+    /* Group specifies which group (e.g. password authenticator) this node belongs to. default DefaultGroup password PasswordGroup oidc OpenIDConnectGroup profile ProfileGroup link LinkGroup code CodeGroup totp TOTPGroup lookup_secret LookupGroup webauthn WebAuthnGroup passkey PasskeyGroup */
     @SerialName(value = "group") @Required val group: UiNode.Group,
 
     @SerialName(value = "messages") @Required val messages: kotlin.Array<UiText>,
@@ -51,9 +51,9 @@ data class UiNode (
 ) {
 
     /**
-     * Group specifies which group (e.g. password authenticator) this node belongs to. default DefaultGroup password PasswordGroup oidc OpenIDConnectGroup profile ProfileGroup link LinkGroup code CodeGroup totp TOTPGroup lookup_secret LookupGroup webauthn WebAuthnGroup
+     * Group specifies which group (e.g. password authenticator) this node belongs to. default DefaultGroup password PasswordGroup oidc OpenIDConnectGroup profile ProfileGroup link LinkGroup code CodeGroup totp TOTPGroup lookup_secret LookupGroup webauthn WebAuthnGroup passkey PasskeyGroup
      *
-     * Values: DEFAULT,PASSWORD,OIDC,PROFILE,LINK,CODE,TOTP,LOOKUP_SECRET,WEBAUTHN
+     * Values: DEFAULT,PASSWORD,OIDC,PROFILE,LINK,CODE,TOTP,LOOKUP_SECRET,WEBAUTHN,PASSKEY
      */
     @Serializable
     enum class Group(val value: kotlin.String) {
@@ -65,7 +65,8 @@ data class UiNode (
         @SerialName(value = "code") CODE("code"),
         @SerialName(value = "totp") TOTP("totp"),
         @SerialName(value = "lookup_secret") LOOKUP_SECRET("lookup_secret"),
-        @SerialName(value = "webauthn") WEBAUTHN("webauthn");
+        @SerialName(value = "webauthn") WEBAUTHN("webauthn"),
+        @SerialName(value = "passkey") PASSKEY("passkey");
     }
     /**
      * The node's type text Text input Input img Image a Anchor script Script

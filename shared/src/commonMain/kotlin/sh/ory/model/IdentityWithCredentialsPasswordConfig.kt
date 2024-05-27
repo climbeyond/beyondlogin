@@ -23,14 +23,14 @@ import kotlinx.serialization.encoding.*
 /**
  * Create Identity and Import Password Credentials Configuration
  *
- * @param hashedPassword The hashed password in [PHC format]( https://www.ory.sh/docs/kratos/concepts/credentials/username-email-password#hashed-password-format)
+ * @param hashedPassword The hashed password in [PHC format](https://www.ory.sh/docs/kratos/manage-identities/import-user-accounts-identities#hashed-passwords)
  * @param password The password in plain text if no hash is available.
  */
 @Serializable
 
 data class IdentityWithCredentialsPasswordConfig (
 
-    /* The hashed password in [PHC format]( https://www.ory.sh/docs/kratos/concepts/credentials/username-email-password#hashed-password-format) */
+    /* The hashed password in [PHC format](https://www.ory.sh/docs/kratos/manage-identities/import-user-accounts-identities#hashed-passwords) */
     @SerialName(value = "hashed_password") val hashedPassword: kotlin.String? = null,
 
     /* The password in plain text if no hash is available. */

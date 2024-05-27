@@ -19,6 +19,7 @@ package sh.ory.model
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
+import kotlinx.serialization.json.JsonObject
 
 /**
  * 
@@ -41,7 +42,7 @@ data class UiText (
     @SerialName(value = "type") @Required val type: UiText.Type,
 
     /* The message's context. Useful when customizing messages. */
-    //@SerialName(value = "context") val context: kotlin.String? = null
+    @SerialName(value = "context") val context: JsonObject? = null
 
 ) {
 

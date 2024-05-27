@@ -26,6 +26,7 @@ import kotlinx.serialization.encoding.*
  * @param method Method  Should be set to password when trying to update a password.
  * @param password Password is the updated password
  * @param csrfToken CSRFToken is the anti-CSRF token
+ * @param transientPayload Transient data to pass along to any webhooks
  */
 @Serializable
 
@@ -38,7 +39,10 @@ data class UpdateSettingsFlowWithPasswordMethod (
     @SerialName(value = "password") @Required val password: kotlin.String,
 
     /* CSRFToken is the anti-CSRF token */
-    @SerialName(value = "csrf_token") val csrfToken: kotlin.String? = null
+    @SerialName(value = "csrf_token") val csrfToken: kotlin.String? = null,
+
+    /* Transient data to pass along to any webhooks */
+    @SerialName(value = "transient_payload") val transientPayload: kotlin.String? = null
 
 )
 

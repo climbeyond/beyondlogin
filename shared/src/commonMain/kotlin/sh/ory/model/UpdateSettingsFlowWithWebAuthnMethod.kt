@@ -25,6 +25,7 @@ import kotlinx.serialization.encoding.*
  *
  * @param method Method  Should be set to \"webauthn\" when trying to add, update, or remove a webAuthn pairing.
  * @param csrfToken CSRFToken is the anti-CSRF token
+ * @param transientPayload Transient data to pass along to any webhooks
  * @param webauthnRegister Register a WebAuthn Security Key  It is expected that the JSON returned by the WebAuthn registration process is included here.
  * @param webauthnRegisterDisplayname Name of the WebAuthn Security Key to be Added  A human-readable name for the security key which will be added.
  * @param webauthnRemove Remove a WebAuthn Security Key  This must contain the ID of the WebAuthN connection.
@@ -38,6 +39,9 @@ data class UpdateSettingsFlowWithWebAuthnMethod (
 
     /* CSRFToken is the anti-CSRF token */
     @SerialName(value = "csrf_token") val csrfToken: kotlin.String? = null,
+
+    /* Transient data to pass along to any webhooks */
+    @SerialName(value = "transient_payload") val transientPayload: kotlin.String? = null,
 
     /* Register a WebAuthn Security Key  It is expected that the JSON returned by the WebAuthn registration process is included here. */
     @SerialName(value = "webauthn_register") val webauthnRegister: kotlin.String? = null,

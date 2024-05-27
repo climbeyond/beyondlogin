@@ -29,6 +29,7 @@ import kotlinx.serialization.encoding.*
  * @param lookupSecretDisable Disables this method if true.
  * @param lookupSecretRegenerate If set to true will regenerate the lookup secrets
  * @param lookupSecretReveal If set to true will reveal the lookup secrets
+ * @param transientPayload Transient data to pass along to any webhooks
  */
 @Serializable
 
@@ -50,7 +51,10 @@ data class UpdateSettingsFlowWithLookupMethod (
     @SerialName(value = "lookup_secret_regenerate") val lookupSecretRegenerate: kotlin.Boolean? = null,
 
     /* If set to true will reveal the lookup secrets */
-    @SerialName(value = "lookup_secret_reveal") val lookupSecretReveal: kotlin.Boolean? = null
+    @SerialName(value = "lookup_secret_reveal") val lookupSecretReveal: kotlin.Boolean? = null,
+
+    /* Transient data to pass along to any webhooks */
+    @SerialName(value = "transient_payload") val transientPayload: kotlin.String? = null
 
 )
 

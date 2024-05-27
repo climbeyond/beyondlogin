@@ -17,7 +17,6 @@ package sh.ory.model
 
 import sh.ory.model.ContinueWith
 import sh.ory.model.Identity
-import sh.ory.model.SettingsFlowState
 import sh.ory.model.UiContainer
 
 import kotlinx.serialization.*
@@ -32,12 +31,13 @@ import kotlinx.serialization.encoding.*
  * @param identity 
  * @param issuedAt IssuedAt is the time (UTC) when the flow occurred.
  * @param requestUrl RequestURL is the initial URL that was requested from Ory Kratos. It can be used to forward information contained in the URL's path or query for example.
- * @param state 
+ * @param state State represents the state of this flow. It knows two states:  show_form: No user data has been collected, or it is invalid, and thus the form should be shown. success: Indicates that the settings flow has been updated successfully with the provided data. Done will stay true when repeatedly checking. If set to true, done will revert back to false only when a flow with invalid (e.g. \"please use a valid phone number\") data was sent.
  * @param type The flow type can either be `api` or `browser`.
  * @param ui 
  * @param active Active, if set, contains the registration method that is being used. It is initially not set.
  * @param continueWith Contains a list of actions, that could follow this flow  It can, for example, contain a reference to the verification flow, created as part of the user's registration.
  * @param returnTo ReturnTo contains the requested return_to URL.
+ * @param transientPayload TransientPayload is used to pass data from the settings flow to hooks and email templates
  */
 @Serializable
 
@@ -57,6 +57,7 @@ data class SettingsFlow (
     /* RequestURL is the initial URL that was requested from Ory Kratos. It can be used to forward information contained in the URL's path or query for example. */
     @SerialName(value = "request_url") @Required val requestUrl: kotlin.String,
 
+    /* State represents the state of this flow. It knows two states:  show_form: No user data has been collected, or it is invalid, and thus the form should be shown. success: Indicates that the settings flow has been updated successfully with the provided data. Done will stay true when repeatedly checking. If set to true, done will revert back to false only when a flow with invalid (e.g. \"please use a valid phone number\") data was sent. */
     @SerialName(value = "state") @Required val state: SettingsFlowState,
 
     /* The flow type can either be `api` or `browser`. */
@@ -71,7 +72,10 @@ data class SettingsFlow (
     @SerialName(value = "continue_with") val continueWith: kotlin.Array<ContinueWith>? = null,
 
     /* ReturnTo contains the requested return_to URL. */
-    @SerialName(value = "return_to") val returnTo: kotlin.String? = null
+    @SerialName(value = "return_to") val returnTo: kotlin.String? = null,
+
+    /* TransientPayload is used to pass data from the settings flow to hooks and email templates */
+    @SerialName(value = "transient_payload") val transientPayload: kotlin.String? = null
 
 )
 

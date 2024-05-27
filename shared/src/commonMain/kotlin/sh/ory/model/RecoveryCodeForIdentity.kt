@@ -25,7 +25,7 @@ import kotlinx.serialization.encoding.*
  *
  * @param recoveryCode RecoveryCode is the code that can be used to recover the account
  * @param recoveryLink RecoveryLink with flow  This link opens the recovery UI with an empty `code` field.
- * @param expiresAt Expires At is the timestamp of when the recovery flow expires  The timestamp when the recovery link expires.
+ * @param expiresAt Expires At is the timestamp of when the recovery flow expires  The timestamp when the recovery code expires.
  */
 @Serializable
 
@@ -37,7 +37,7 @@ data class RecoveryCodeForIdentity (
     /* RecoveryLink with flow  This link opens the recovery UI with an empty `code` field. */
     @SerialName(value = "recovery_link") @Required val recoveryLink: kotlin.String,
 
-    /* Expires At is the timestamp of when the recovery flow expires  The timestamp when the recovery link expires. */
+    /* Expires At is the timestamp of when the recovery flow expires  The timestamp when the recovery code expires. */
     @SerialName(value = "expires_at") val expiresAt: kotlinx.datetime.Instant? = null
 
 )

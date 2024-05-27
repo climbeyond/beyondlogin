@@ -51,11 +51,15 @@ open class ApiClient(
 
     private val authentications: kotlin.collections.Map<String, Authentication> by lazy {
         mapOf(
-                "oryAccessToken" to ApiKeyAuth("header", "Authorization"))
+                "basic" to HttpBasicAuth(), 
+                "bearer" to HttpBearerAuth("bearer"), 
+                "oauth2" to OAuth(), 
+                "oryAccessToken" to HttpBearerAuth("bearer"), 
+                "oryNetworkCookie" to ApiKeyAuth("query", "ory_session_ory"))
     }
 
     companion object {
-        const val BASE_URL = "http://localhost"
+        const val BASE_URL = "https://.projects.oryapis.com"
         val JSON_DEFAULT = Json {
           ignoreUnknownKeys = true
           prettyPrint = true

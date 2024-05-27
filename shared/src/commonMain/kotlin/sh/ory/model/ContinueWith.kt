@@ -15,9 +15,11 @@
 
 package sh.ory.model
 
+import sh.ory.model.ContinueWithRecoveryUi
+import sh.ory.model.ContinueWithRecoveryUiFlow
 import sh.ory.model.ContinueWithSetOrySessionToken
+import sh.ory.model.ContinueWithSettingsUi
 import sh.ory.model.ContinueWithVerificationUi
-import sh.ory.model.ContinueWithVerificationUiFlow
 
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
@@ -26,7 +28,7 @@ import kotlinx.serialization.encoding.*
 /**
  * 
  *
- * @param action Action will always be `set_ory_session_token` set_ory_session_token ContinueWithActionSetOrySessionToken show_verification_ui ContinueWithActionShowVerificationUI
+ * @param action Action will always be `show_recovery_ui` show_recovery_ui ContinueWithActionShowRecoveryUIString
  * @param flow 
  * @param orySessionToken Token is the token of the session
  */
@@ -34,20 +36,19 @@ import kotlinx.serialization.encoding.*
 
 interface ContinueWith {
 
-    /* Action will always be `set_ory_session_token` set_ory_session_token ContinueWithActionSetOrySessionToken show_verification_ui ContinueWithActionShowVerificationUI */
+    /* Action will always be `show_recovery_ui` show_recovery_ui ContinueWithActionShowRecoveryUIString */
     @SerialName(value = "action") @Required val action: ContinueWith.Action
-    @SerialName(value = "flow") @Required val flow: ContinueWithVerificationUiFlow
+    @SerialName(value = "flow") @Required val flow: ContinueWithRecoveryUiFlow
     /* Token is the token of the session */
     @SerialName(value = "ory_session_token") @Required val orySessionToken: kotlin.String
     /**
-     * Action will always be `set_ory_session_token` set_ory_session_token ContinueWithActionSetOrySessionToken show_verification_ui ContinueWithActionShowVerificationUI
+     * Action will always be `show_recovery_ui` show_recovery_ui ContinueWithActionShowRecoveryUIString
      *
-     * Values: SET_ORY_SESSION_TOKEN,SHOW_VERIFICATION_UI
+     * Values: SHOW_RECOVERY_UI
      */
     @Serializable
     enum class Action(val value: kotlin.String) {
-        @SerialName(value = "set_ory_session_token") SET_ORY_SESSION_TOKEN("set_ory_session_token"),
-        @SerialName(value = "show_verification_ui") SHOW_VERIFICATION_UI("show_verification_ui");
+        @SerialName(value = "show_recovery_ui") SHOW_RECOVERY_UI("show_recovery_ui");
     }
 }
 

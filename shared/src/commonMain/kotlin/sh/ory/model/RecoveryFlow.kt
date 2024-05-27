@@ -15,7 +15,7 @@
 
 package sh.ory.model
 
-import sh.ory.model.RecoveryFlowState
+import sh.ory.model.ContinueWith
 import sh.ory.model.UiContainer
 
 import kotlinx.serialization.*
@@ -29,11 +29,13 @@ import kotlinx.serialization.encoding.*
  * @param id ID represents the request's unique ID. When performing the recovery flow, this represents the id in the recovery ui's query parameter: http://<selfservice.flows.recovery.ui_url>?request=<id>
  * @param issuedAt IssuedAt is the time (UTC) when the request occurred.
  * @param requestUrl RequestURL is the initial URL that was requested from Ory Kratos. It can be used to forward information contained in the URL's path or query for example.
- * @param state 
+ * @param state State represents the state of this request:  choose_method: ask the user to choose a method (e.g. recover account via email) sent_email: the email has been sent to the user passed_challenge: the request was successful and the recovery challenge was passed.
  * @param type The flow type can either be `api` or `browser`.
  * @param ui 
  * @param active Active, if set, contains the recovery method that is being used. It is initially not set.
+ * @param continueWith Contains possible actions that could follow this flow
  * @param returnTo ReturnTo contains the requested return_to URL.
+ * @param transientPayload TransientPayload is used to pass data from the recovery flow to hooks and email templates
  */
 @Serializable
 
@@ -51,6 +53,7 @@ data class RecoveryFlow (
     /* RequestURL is the initial URL that was requested from Ory Kratos. It can be used to forward information contained in the URL's path or query for example. */
     @SerialName(value = "request_url") @Required val requestUrl: kotlin.String,
 
+    /* State represents the state of this request:  choose_method: ask the user to choose a method (e.g. recover account via email) sent_email: the email has been sent to the user passed_challenge: the request was successful and the recovery challenge was passed. */
     @SerialName(value = "state") @Required val state: RecoveryFlowState,
 
     /* The flow type can either be `api` or `browser`. */
@@ -61,8 +64,14 @@ data class RecoveryFlow (
     /* Active, if set, contains the recovery method that is being used. It is initially not set. */
     @SerialName(value = "active") val active: kotlin.String? = null,
 
+    /* Contains possible actions that could follow this flow */
+    @SerialName(value = "continue_with") val continueWith: kotlin.Array<ContinueWith>? = null,
+
     /* ReturnTo contains the requested return_to URL. */
-    @SerialName(value = "return_to") val returnTo: kotlin.String? = null
+    @SerialName(value = "return_to") val returnTo: kotlin.String? = null,
+
+    /* TransientPayload is used to pass data from the recovery flow to hooks and email templates */
+    @SerialName(value = "transient_payload") val transientPayload: kotlin.String? = null
 
 )
 

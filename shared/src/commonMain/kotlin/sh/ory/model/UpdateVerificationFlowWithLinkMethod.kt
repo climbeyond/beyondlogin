@@ -26,6 +26,7 @@ import kotlinx.serialization.encoding.*
  * @param email Email to Verify  Needs to be set when initiating the flow. If the email is a registered verification email, a verification link will be sent. If the email is not known, a email with details on what happened will be sent instead.  format: email
  * @param method Method is the method that should be used for this verification flow  Allowed values are `link` and `code` link VerificationStrategyLink code VerificationStrategyCode
  * @param csrfToken Sending the anti-csrf token is only required for browser login flows.
+ * @param transientPayload Transient data to pass along to any webhooks
  */
 @Serializable
 
@@ -38,7 +39,10 @@ data class UpdateVerificationFlowWithLinkMethod (
     @SerialName(value = "method") @Required val method: UpdateVerificationFlowWithLinkMethod.Method,
 
     /* Sending the anti-csrf token is only required for browser login flows. */
-    @SerialName(value = "csrf_token") val csrfToken: kotlin.String? = null
+    @SerialName(value = "csrf_token") val csrfToken: kotlin.String? = null,
+
+    /* Transient data to pass along to any webhooks */
+    @SerialName(value = "transient_payload") val transientPayload: kotlin.String? = null
 
 ) {
 

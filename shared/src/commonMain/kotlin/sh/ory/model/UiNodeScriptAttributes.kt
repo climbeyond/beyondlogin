@@ -27,7 +27,7 @@ import kotlinx.serialization.encoding.*
  * @param crossorigin The script cross origin policy
  * @param id A unique identifier
  * @param integrity The script's integrity hash
- * @param nodeType NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0. In this struct it technically always is \"script\".
+ * @param nodeType NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0. In this struct it technically always is \"script\". text Text input Input img Image a Anchor script Script
  * @param nonce Nonce for CSP  A nonce you may want to use to improve your Content Security Policy. You do not have to use this value but if you want to improve your CSP policies you may use it. You can also choose to use your own nonce value!
  * @param referrerpolicy The script referrer policy
  * @param src The script source
@@ -49,8 +49,8 @@ data class UiNodeScriptAttributes (
     /* The script's integrity hash */
     @SerialName(value = "integrity") @Required val integrity: kotlin.String,
 
-    /* NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0. In this struct it technically always is \"script\". */
-    @SerialName(value = "node_type") @Required val nodeType: kotlin.String,
+    /* NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0. In this struct it technically always is \"script\". text Text input Input img Image a Anchor script Script */
+    @SerialName(value = "node_type") @Required val nodeType: UiNodeScriptAttributes.NodeType,
 
     /* Nonce for CSP  A nonce you may want to use to improve your Content Security Policy. You do not have to use this value but if you want to improve your CSP policies you may use it. You can also choose to use your own nonce value! */
     @SerialName(value = "nonce") @Required val nonce: kotlin.String,
@@ -64,5 +64,20 @@ data class UiNodeScriptAttributes (
     /* The script MIME type */
     @SerialName(value = "type") @Required val type: kotlin.String
 
-)
+) {
+
+    /**
+     * NodeType represents this node's types. It is a mirror of `node.type` and is primarily used to allow compatibility with OpenAPI 3.0. In this struct it technically always is \"script\". text Text input Input img Image a Anchor script Script
+     *
+     * Values: TEXT,INPUT,IMG,A,SCRIPT
+     */
+    @Serializable
+    enum class NodeType(val value: kotlin.String) {
+        @SerialName(value = "text") TEXT("text"),
+        @SerialName(value = "input") INPUT("input"),
+        @SerialName(value = "img") IMG("img"),
+        @SerialName(value = "a") A("a"),
+        @SerialName(value = "script") SCRIPT("script");
+    }
+}
 

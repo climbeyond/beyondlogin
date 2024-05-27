@@ -16,7 +16,6 @@
 package sh.ory.model
 
 import sh.ory.model.IdentityCredentials
-import sh.ory.model.IdentityState
 import sh.ory.model.RecoveryIdentityAddress
 import sh.ory.model.VerifiableIdentityAddress
 
@@ -36,8 +35,9 @@ import kotlinx.serialization.json.JsonObject
  * @param credentials Credentials represents all credentials that can be used for authenticating this identity.
  * @param metadataAdmin NullJSONRawMessage represents a json.RawMessage that works well with JSON, SQL, and Swagger and is NULLable-
  * @param metadataPublic NullJSONRawMessage represents a json.RawMessage that works well with JSON, SQL, and Swagger and is NULLable-
+ * @param organizationId 
  * @param recoveryAddresses RecoveryAddresses contains all the addresses that can be used to recover an identity.
- * @param state 
+ * @param state State is the identity's state.  This value has currently no effect. active StateActive inactive StateInactive
  * @param stateChangedAt 
  * @param updatedAt UpdatedAt is a helper struct field for gobuffalo.pop.
  * @param verifiableAddresses VerifiableAddresses contains all the addresses that can be verified by the user.
@@ -65,15 +65,18 @@ data class Identity (
     @SerialName(value = "credentials") val credentials: kotlin.collections.Map<kotlin.String, IdentityCredentials>? = null,
 
     /* NullJSONRawMessage represents a json.RawMessage that works well with JSON, SQL, and Swagger and is NULLable- */
-    @SerialName(value = "metadata_admin") val metadataAdmin: JsonObject? = null,
+    @SerialName(value = "metadata_admin") val metadataAdmin: kotlin.String? = null,
 
     /* NullJSONRawMessage represents a json.RawMessage that works well with JSON, SQL, and Swagger and is NULLable- */
-    @SerialName(value = "metadata_public") val metadataPublic: JsonObject? = null,
+    @SerialName(value = "metadata_public") val metadataPublic: kotlin.String? = null,
+
+    @SerialName(value = "organization_id") val organizationId: kotlin.String? = null,
 
     /* RecoveryAddresses contains all the addresses that can be used to recover an identity. */
     @SerialName(value = "recovery_addresses") val recoveryAddresses: kotlin.Array<RecoveryIdentityAddress>? = null,
 
-    @SerialName(value = "state") val state: IdentityState? = null,
+    /* State is the identity's state.  This value has currently no effect. active StateActive inactive StateInactive */
+    @SerialName(value = "state") val state: Identity.State? = null,
 
     @SerialName(value = "state_changed_at") val stateChangedAt: kotlinx.datetime.Instant? = null,
 
@@ -83,5 +86,17 @@ data class Identity (
     /* VerifiableAddresses contains all the addresses that can be verified by the user. */
     @SerialName(value = "verifiable_addresses") val verifiableAddresses: kotlin.Array<VerifiableIdentityAddress>? = null
 
-)
+) {
+
+    /**
+     * State is the identity's state.  This value has currently no effect. active StateActive inactive StateInactive
+     *
+     * Values: ACTIVE,INACTIVE
+     */
+    @Serializable
+    enum class State(val value: kotlin.String) {
+        @SerialName(value = "active") ACTIVE("active"),
+        @SerialName(value = "inactive") INACTIVE("inactive");
+    }
+}
 

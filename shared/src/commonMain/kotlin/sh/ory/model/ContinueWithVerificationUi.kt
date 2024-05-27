@@ -24,14 +24,14 @@ import kotlinx.serialization.encoding.*
 /**
  * Indicates, that the UI flow could be continued by showing a verification ui
  *
- * @param action Action will always be `show_verification_ui` set_ory_session_token ContinueWithActionSetOrySessionToken show_verification_ui ContinueWithActionShowVerificationUI
+ * @param action Action will always be `show_verification_ui` show_verification_ui ContinueWithActionShowVerificationUIString
  * @param flow 
  */
 @Serializable
 
 data class ContinueWithVerificationUi (
 
-    /* Action will always be `show_verification_ui` set_ory_session_token ContinueWithActionSetOrySessionToken show_verification_ui ContinueWithActionShowVerificationUI */
+    /* Action will always be `show_verification_ui` show_verification_ui ContinueWithActionShowVerificationUIString */
     @SerialName(value = "action") @Required val action: ContinueWithVerificationUi.Action,
 
     @SerialName(value = "flow") @Required val flow: ContinueWithVerificationUiFlow
@@ -39,13 +39,12 @@ data class ContinueWithVerificationUi (
 ) {
 
     /**
-     * Action will always be `show_verification_ui` set_ory_session_token ContinueWithActionSetOrySessionToken show_verification_ui ContinueWithActionShowVerificationUI
+     * Action will always be `show_verification_ui` show_verification_ui ContinueWithActionShowVerificationUIString
      *
-     * Values: SET_ORY_SESSION_TOKEN,SHOW_VERIFICATION_UI
+     * Values: SHOW_VERIFICATION_UI
      */
     @Serializable
     enum class Action(val value: kotlin.String) {
-        @SerialName(value = "set_ory_session_token") SET_ORY_SESSION_TOKEN("set_ory_session_token"),
         @SerialName(value = "show_verification_ui") SHOW_VERIFICATION_UI("show_verification_ui");
     }
 }

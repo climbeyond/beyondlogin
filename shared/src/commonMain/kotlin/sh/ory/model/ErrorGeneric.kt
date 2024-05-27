@@ -15,7 +15,7 @@
 
 package sh.ory.model
 
-import sh.ory.model.GenericError
+import sh.ory.model.GenericErrorContent
 
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
@@ -30,7 +30,7 @@ import kotlinx.serialization.encoding.*
 
 data class ErrorGeneric (
 
-    @SerialName(value = "error") @Required val error: GenericError
+    @SerialName(value = "error") @Required val error: GenericErrorContent
 
 )
 

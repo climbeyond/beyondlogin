@@ -52,15 +52,15 @@ import climbeyond.beyondlogin.generated.resources.beyond_login_login_no_account
 import climbeyond.beyondlogin.generated.resources.beyond_login_login_no_account_register
 import climbeyond.beyondlogin.generated.resources.beyond_login_login_password
 import climbeyond.beyondlogin.generated.resources.beyond_login_navigate_back
-import climbeyond.beyondlogin.generated.resources.beyond_login_session_email
 import io.ktor.util.reflect.typeInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import sh.ory.model.LoginFlow
-import sh.ory.model.UpdateLoginFlowWithPasswordMethod
+import sh.ory.model.UpdateLoginFlowBody
 
 
 class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
@@ -69,6 +69,43 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
 
     var email: String = ""
     var password: String = ""
+
+    @Serializable
+    data class LoginBody(
+            override val method: String,
+            override val identifier: String,
+            override val password: String
+    ) : UpdateLoginFlowBody {
+
+        override val csrfToken: String
+            get() = ""
+        override val provider: String
+            get() = ""
+        override val totpCode: String
+            get() = ""
+        override val lookupSecret: String
+            get() = ""
+        override val passwordIdentifier: String?
+            get() = null
+        override val transientPayload: String?
+            get() = null
+        override val idToken: String?
+            get() = null
+        override val idTokenNonce: String?
+            get() = null
+        override val traits: String?
+            get() = null
+        override val upstreamParameters: String?
+            get() = null
+        override val webauthnLogin: String?
+            get() = null
+        override val code: String?
+            get() = null
+        override val resend: String?
+            get() = null
+        override val passkeyLogin: String?
+            get() = null
+    }
 
     @Composable
     override fun View() {
@@ -220,7 +257,7 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
         // clear possible error
         errorMessage.value = ""
 
-        val method = UpdateLoginFlowWithPasswordMethod(email, "password", password)
+        val method = LoginBody("password", email, password)
 
         coroutine.launch {
             try {
@@ -279,7 +316,7 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
                 val result = self.viewService.getOryApi().createNativeLoginFlow(false, "aal1", null)
 
                 if (result.success) {
-                    self.viewService.oryFlowId = result.provider.body(result.response).id
+                    self.viewService.oryFlowId = result.body().id
                     self.viewService.currentView.value = ControllerView.Screen.LOGIN
 
                 } else {
