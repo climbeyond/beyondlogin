@@ -19,10 +19,10 @@ interface SettingsListener {
 object Settings {
 
     @Serializable
-    data class Data(val kratosUrl: String) {
-        internal var logLevel: ApiLogLevel = ApiLogLevel.INFO
-        internal var logTag = "BeyondLogin"
-    }
+    data class Data(
+            val kratosUrl: String,
+            var logLevel: ApiLogLevel = ApiLogLevel.INFO,
+            var logTag: String = "BeyondLogin")
 
     @Serializable
     enum class ApiLogLevel {
