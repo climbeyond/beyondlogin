@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -155,92 +156,114 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
         val coroutine = rememberCoroutineScope()
 
         Column(
-                Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
+            Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
         ) {
-            Icon(vectorResource(Res.drawable.beyond_login_arrow_back),
-                    stringResource(Res.string.beyond_login_navigate_back),
-                    Modifier
-                        .padding(top = 30.dp, start = 30.dp)
-                        .clickable {
-                            coroutine.launch {
-                                LoginView.init(self)
-                            }
-                    },
-                    tint = Colors.drawable_tint_white)
+            Header(coroutine)
+            Content(coroutine)
+            Footer(coroutine)
+        }
+    }
 
-            Text(stringResource(Res.string.beyond_login_recovery_header).uppercase(),
-                    Modifier
-                        .align(alignment = Alignment.CenterHorizontally)
-                        .padding(top = 50.dp),
-                    color = Colors.text_white,
-                    fontWeight = FontWeight.Light,
-                    fontSize = 22.sp)
+    @Composable
+    private fun ColumnScope.Header(coroutine: CoroutineScope) {
+        Icon(
+            vectorResource(Res.drawable.beyond_login_arrow_back),
+            stringResource(Res.string.beyond_login_navigate_back),
+            Modifier
+                .padding(top = 30.dp, start = 30.dp)
+                .clickable {
+                    coroutine.launch {
+                        LoginView.init(self)
+                    }
+                },
+            tint = Colors.drawable_tint_white
+        )
 
-            Divider(
-                    color = Colors.divider,
-                    modifier = Modifier
-                        .align(alignment = Alignment.CenterHorizontally)
-                        .padding(top = 40.dp)
-                        .width(50.dp)
-                        .height(3.dp)
+        Text(
+            stringResource(Res.string.beyond_login_recovery_header).uppercase(),
+            Modifier
+                .align(alignment = Alignment.CenterHorizontally)
+                .padding(top = 50.dp),
+            color = Colors.text_white,
+            fontWeight = FontWeight.Light,
+            fontSize = 22.sp
+        )
+
+        Divider(
+            color = Colors.divider,
+            modifier = Modifier
+                .align(alignment = Alignment.CenterHorizontally)
+                .padding(top = 40.dp)
+                .width(50.dp)
+                .height(3.dp)
+        )
+    }
+
+    @Composable
+    private fun ColumnScope.Content(coroutine: CoroutineScope) {
+        when (subView.value) {
+            VIEWS.EMAIL -> subEmail(coroutine)
+            VIEWS.CONFIRMATION -> subConfirmation(coroutine)
+            VIEWS.RESET -> subReset(coroutine)
+            VIEWS.SUCCESS -> subSuccess(coroutine)
+        }
+
+        if (errorMessage.value.isNotEmpty()) {
+            Text(
+                errorMessage.value,
+                Modifier
+                    .align(alignment = Alignment.CenterHorizontally)
+                    .padding(top = 40.dp, start = 40.dp, end = 40.dp),
+                color = Colors.text_error,
+                fontSize = 14.sp
+            )
+        }
+    }
+
+    @Composable
+    private fun ColumnScope.Footer(coroutine: CoroutineScope) {
+        Spacer(modifier = Modifier.weight(1f))
+
+        Row(
+            Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                stringResource(Res.string.beyond_login_login_no_account),
+                Modifier
+                    .align(Alignment.CenterVertically)
+                    .height(48.dp)
+                    .wrapContentHeight(),
+                color = Colors.text_white,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center
             )
 
-            when (subView.value) {
-                VIEWS.EMAIL -> subEmail(coroutine)
-                VIEWS.CONFIRMATION -> subConfirmation(coroutine)
-                VIEWS.RESET -> subReset(coroutine)
-                VIEWS.SUCCESS -> subSuccess(coroutine)
-            }
-
-            if (errorMessage.value.isNotEmpty()) {
-                Text(errorMessage.value,
-                        Modifier
-                            .align(alignment = Alignment.CenterHorizontally)
-                            .padding(top = 40.dp, start = 40.dp, end = 40.dp),
-                        color = Colors.text_error,
-                        fontSize = 14.sp)
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Row(
-                    Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+            Box(
+                Modifier
+                    .padding(start = 10.dp)
+                    .height(48.dp)
+                    .clickable {
+                        coroutine.launch {
+                            RegisterView.init(self)
+                        }
+                    },
+                contentAlignment = Alignment.Center
             ) {
-                Text(stringResource(Res.string.beyond_login_login_no_account),
-                        Modifier
-                            .align(Alignment.CenterVertically)
-                            .height(48.dp)
-                            .wrapContentHeight(),
-                        color = Colors.text_white,
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Center)
-
-                Box(
-                        Modifier
-                            .padding(start = 10.dp)
-                            .height(48.dp)
-                            .clickable {
-                                coroutine.launch {
-                                    RegisterView.init(self)
-                                }
-                            },
-                        contentAlignment = Alignment.Center
-                ) {
-                    Text(stringResource(Res.string.beyond_login_login_no_account_register),
-                            Modifier.padding(start = 10.dp, end = 10.dp),
-                            color = Colors.text_highlight,
-                            textAlign = TextAlign.Center,
-                            fontSize = 18.sp,
-                    )
-                }
+                Text(
+                    stringResource(Res.string.beyond_login_login_no_account_register),
+                    Modifier.padding(start = 10.dp, end = 10.dp),
+                    color = Colors.text_highlight,
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp,
+                )
             }
-
-            Spacer(modifier = Modifier.height(20.dp))
         }
+
+        Spacer(modifier = Modifier.height(20.dp))
     }
 
     @Composable
@@ -251,19 +274,21 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
 
         val leadingEmailIcon = Elements.editTextIcon(Res.drawable.beyond_login_icon_email)
         Elements.EditText(stringResource(Res.string.beyond_login_login_email),
-                Modifier.padding(start = 20.dp, end = 20.dp, top = 60.dp),
-                leadingIcon = leadingEmailIcon,
-                trailingIcon = null, valueChange = {
-            errorMessage.value = ""
-            email = it
-        }) {}
+            Modifier.padding(start = 20.dp, end = 20.dp, top = 60.dp),
+            leadingIcon = leadingEmailIcon,
+            trailingIcon = null, valueChange = {
+                errorMessage.value = ""
+                email = it
+            })
 
-        Elements.IconButton(stringResource(Res.string.beyond_login_recovery_button),
-                Res.drawable.beyond_login_recovery,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp, top = 50.dp),
-                buttonEnabled = recoveryButtonEnabled) {
+        Elements.IconButton(
+            stringResource(Res.string.beyond_login_recovery_button),
+            Res.drawable.beyond_login_recovery,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 20.dp, end = 20.dp, top = 50.dp),
+            buttonEnabled = recoveryButtonEnabled
+        ) {
 
             keyboardController?.hide()
 
@@ -305,7 +330,7 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
 
     @Composable
     private fun digitField(coroutine: CoroutineScope, focusManager: FocusManager, index: Int) {
-        digitsEdit[index] = Elements.EditText("", Modifier
+        Elements.EditText("", Modifier
             .padding(horizontal = 3.dp)
             .width(50.dp)
             .onFocusChanged {
@@ -314,19 +339,19 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
                     digits[index] = ""
                 }
             },
-                mutableStateOf(KeyboardType.Number),
-                textCenter = true,
-                valueChange = {
-                    digits[index] = it
+            mutableStateOf(KeyboardType.Number),
+            textCenter = true,
+            valueChange = {
+                digits[index] = it
 
-                    val digits = digits.joinToString(separator = "")
+                val digits = digits.joinToString(separator = "")
 
-                    if (digits.length == 6) {
-                        handleRecoveryCode(coroutine, focusManager, digits)
-                    } else {
-                        focusManager.moveFocus(FocusDirection.Next)
-                    }
-                }) {}
+                if (digits.length == 6) {
+                    handleRecoveryCode(coroutine, focusManager, digits)
+                } else {
+                    focusManager.moveFocus(FocusDirection.Next)
+                }
+            })
     }
 
     @Composable

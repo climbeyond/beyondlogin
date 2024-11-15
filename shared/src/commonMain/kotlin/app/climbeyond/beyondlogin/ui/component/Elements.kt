@@ -147,63 +147,64 @@ object Elements {
 
     @Composable
     fun EditText(
-            label: String,
-            modifier: Modifier,
-            fieldType: MutableState<KeyboardType> = mutableStateOf(KeyboardType.Text),
-            focusNext: Boolean = false,
-            leadingIcon: @Composable (() -> Unit)? = null,
-            trailingIcon: @Composable (() -> Unit)? = null,
-            closeOnDone: Boolean = false,
-            lines: Int = 1,
-            textCenter: Boolean = false,
-            valueChange: ((value: String) -> Unit)? = null,
-            done: (value: String) -> Unit): (String) -> Unit {
+        label: String,
+        modifier: Modifier,
+        fieldType: MutableState<KeyboardType> = mutableStateOf(KeyboardType.Text),
+        focusNext: Boolean = false,
+        leadingIcon: @Composable (() -> Unit)? = null,
+        trailingIcon: @Composable (() -> Unit)? = null,
+        closeOnDone: Boolean = false,
+        lines: Int = 1,
+        textCenter: Boolean = false,
+        valueChange: ((value: String) -> Unit)? = null,
+        done: ((value: String) -> Unit)? = null,
+    ) {
 
         val (text, setText) = remember { mutableStateOf("") }
         val keyboardController = LocalSoftwareKeyboardController.current
 
         OutlinedTextField(
-                value = text,
-                onValueChange = { change: String ->
-                    setText(change)
-                    valueChange?.invoke(change)
-                },
-                modifier = modifier.fillMaxWidth(),
-                leadingIcon = leadingIcon,
-                trailingIcon = trailingIcon,
-                visualTransformation = if (fieldType.value == KeyboardType.Password
-                        || fieldType.value == KeyboardType.NumberPassword)
-                    PasswordVisualTransformation() else VisualTransformation.None,
-                keyboardOptions = KeyboardOptions(
-                        imeAction = if (focusNext) ImeAction.Next else ImeAction.Done,
-                        keyboardType = fieldType.value
-                ),
-                keyboardActions = KeyboardActions(
-                        onDone = {
-                            if (closeOnDone) {
-                                keyboardController?.hide()
-                            }
-                            done(text)
-                        }
-                ),
-                singleLine = (lines == 1),
-                minLines = lines,
-                maxLines = lines,
-                label = { Text(label) },
-                textStyle = LocalTextStyle.current.copy(
-                        textAlign = if (textCenter) TextAlign.Center else TextAlign.Start),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = Colors.text_green,
-                        unfocusedBorderColor = Colors.white,
-                        focusedLabelColor = Colors.white,
-                        cursorColor = Colors.white,
-                        textColor = Colors.text_white,
-                        unfocusedLabelColor = Colors.text_gray,
-                        errorBorderColor = Colors.button_error
-                )
+            value = text,
+            onValueChange = { change: String ->
+                setText(change)
+                valueChange?.invoke(change)
+            },
+            modifier = modifier.fillMaxWidth(),
+            leadingIcon = leadingIcon,
+            trailingIcon = trailingIcon,
+            visualTransformation = if (fieldType.value == KeyboardType.Password
+                || fieldType.value == KeyboardType.NumberPassword
+            )
+                PasswordVisualTransformation() else VisualTransformation.None,
+            keyboardOptions = KeyboardOptions(
+                imeAction = if (focusNext) ImeAction.Next else ImeAction.Done,
+                keyboardType = fieldType.value
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    if (closeOnDone) {
+                        keyboardController?.hide()
+                    }
+                    done?.invoke(text)
+                }
+            ),
+            singleLine = (lines == 1),
+            minLines = lines,
+            maxLines = lines,
+            label = { Text(label) },
+            textStyle = LocalTextStyle.current.copy(
+                textAlign = if (textCenter) TextAlign.Center else TextAlign.Start
+            ),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Colors.text_green,
+                unfocusedBorderColor = Colors.white,
+                focusedLabelColor = Colors.white,
+                cursorColor = Colors.white,
+                textColor = Colors.text_white,
+                unfocusedLabelColor = Colors.text_gray,
+                errorBorderColor = Colors.button_error
+            )
         )
-
-        return setText
     }
 
     @Composable

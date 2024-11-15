@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -110,164 +111,189 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
 
     @Composable
     override fun View() {
-        val fieldEmailFill = stringResource(Res.string.beyond_login_field_email_fill)
-        val fieldPasswordFill = stringResource(Res.string.beyond_login_field_password_fill)
-
         val coroutine = rememberCoroutineScope()
-        val keyboardController = LocalSoftwareKeyboardController.current
-
-        val loginButtonEnabled = remember { mutableStateOf(true) }
 
         Column(
                 Modifier
                     .fillMaxWidth()
                     .fillMaxHeight()
         ) {
-            Icon(vectorResource(Res.drawable.beyond_login_arrow_back),
-                    stringResource(Res.string.beyond_login_navigate_back),
-                    Modifier
-                        .padding(top = 30.dp, start = 30.dp)
-                        .clickable {
-                            self.viewService.let {
-                                self.viewService.listener.closeBeyondLogin()
-                            }
-                    },
-                    tint = Colors.drawable_tint_white)
-
-            Text(stringResource(Res.string.beyond_login_login_header).uppercase(),
-                    Modifier
-                        .align(alignment = Alignment.CenterHorizontally)
-                        .padding(top = 50.dp),
-                    color = Colors.text_white,
-                    fontWeight = FontWeight.Light,
-                    fontSize = 22.sp)
-
-            Divider(
-                    color = Colors.divider,
-                    modifier = Modifier
-                        .align(alignment = Alignment.CenterHorizontally)
-                        .padding(top = 40.dp)
-                        .width(50.dp)
-                        .height(3.dp)
-            )
-
-            val leadingEmailIcon = Elements.editTextIcon(Res.drawable.beyond_login_icon_email)
-            Elements.EditText(stringResource(Res.string.beyond_login_login_email),
-                    Modifier.padding(start = 20.dp, end = 20.dp, top = 60.dp),
-                    leadingIcon = leadingEmailIcon,
-                    trailingIcon = null, valueChange = {
-                errorMessage.value = ""
-                email = it
-            }) {}
-
-            val leadingPassIcon = Elements.editTextIcon(Res.drawable.beyond_login_icon_lock)
-            val trailingPassIcon = Elements.editTextIcon(Res.drawable.beyond_login_eye,
-                    Res.string.beyond_login_desc_show_password) {
-                passwordVisible.value = if (passwordVisible.value == KeyboardType.Text)
-                    KeyboardType.Password else KeyboardType.Text
-            }
-            Elements.EditText(stringResource(Res.string.beyond_login_login_password),
-                    Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp),
-                    passwordVisible, focusNext = false,
-                    leadingIcon = leadingPassIcon,
-                    trailingIcon = trailingPassIcon,
-                    valueChange = {
-                        errorMessage.value = ""
-                        password = it
-                    }
-            ) {
-                keyboardController?.hide()
-            }
-
-            Elements.IconButton(stringResource(Res.string.beyond_login_login_button),
-                    Res.drawable.beyond_login_login,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 20.dp, end = 20.dp, top = 50.dp),
-                    buttonEnabled = loginButtonEnabled) {
-
-                keyboardController?.hide()
-
-                if (email.isEmpty()) {
-                    errorMessage.value = fieldEmailFill
-                    return@IconButton
-                }
-                if (password.isEmpty()) {
-                    errorMessage.value = fieldPasswordFill
-                    return@IconButton
-                }
-
-                doLogin(coroutine, email, password, loginButtonEnabled)
-            }
-
-            if (errorMessage.value.isNotEmpty()) {
-                Text(errorMessage.value,
-                        Modifier
-                            .align(alignment = Alignment.CenterHorizontally)
-                            .padding(top = 40.dp, start = 40.dp, end = 40.dp),
-                        color = Colors.text_error,
-                        fontSize = 14.sp)
-            }
-
-            Row(
-                    Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-            ) {
-                Text(stringResource(Res.string.beyond_login_recovery_lost_password),
-                        Modifier
-                            .padding(top = 20.dp)
-                            .align(Alignment.CenterVertically)
-                            .height(48.dp)
-                            .wrapContentHeight()
-                            .clickable {
-                                coroutine.launch {
-                                    RecoveryView.init(self)
-                                }
-                            },
-                        color = Colors.text_white,
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Center)
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Row(
-                    Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-            ) {
-                Text(stringResource(Res.string.beyond_login_login_no_account),
-                        Modifier
-                            .align(Alignment.CenterVertically)
-                            .height(48.dp)
-                            .wrapContentHeight(),
-                        color = Colors.text_white,
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Center)
-
-                Box(
-                        Modifier
-                            .padding(start = 10.dp)
-                            .height(48.dp)
-                            .clickable {
-                                coroutine.launch {
-                                    RegisterView.init(self)
-                                }
-                            },
-                        contentAlignment = Alignment.Center
-                ) {
-                    Text(stringResource(Res.string.beyond_login_login_no_account_register),
-                            Modifier.padding(start = 10.dp, end = 10.dp),
-                            color = Colors.text_highlight,
-                            textAlign = TextAlign.Center,
-                            fontSize = 18.sp,
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
+            Header()
+            Content(coroutine)
+            Footer(coroutine)
         }
+    }
+
+    @Composable
+    private fun ColumnScope.Header() {
+        Icon(vectorResource(Res.drawable.beyond_login_arrow_back),
+            stringResource(Res.string.beyond_login_navigate_back),
+            Modifier
+                .padding(top = 30.dp, start = 30.dp)
+                .clickable {
+                    self.viewService.let {
+                        self.viewService.listener.closeBeyondLogin()
+                    }
+                },
+            tint = Colors.drawable_tint_white)
+
+        Text(stringResource(Res.string.beyond_login_login_header).uppercase(),
+            Modifier
+                .align(alignment = Alignment.CenterHorizontally)
+                .padding(top = 50.dp),
+            color = Colors.text_white,
+            fontWeight = FontWeight.Light,
+            fontSize = 22.sp)
+
+        Divider(
+            color = Colors.divider,
+            modifier = Modifier
+                .align(alignment = Alignment.CenterHorizontally)
+                .padding(top = 40.dp)
+                .width(50.dp)
+                .height(3.dp)
+        )
+    }
+
+    @Composable
+    private fun ColumnScope.Content(coroutine: CoroutineScope) {
+        val fieldEmailFill = stringResource(Res.string.beyond_login_field_email_fill)
+        val fieldPasswordFill = stringResource(Res.string.beyond_login_field_password_fill)
+
+        val keyboardController = LocalSoftwareKeyboardController.current
+
+        val loginButtonEnabled = remember { mutableStateOf(true) }
+        val leadingEmailIcon = remember {
+            Elements.editTextIcon(Res.drawable.beyond_login_icon_email)
+        }
+
+        Elements.EditText(
+            stringResource(Res.string.beyond_login_login_email),
+            Modifier.padding(start = 20.dp, end = 20.dp, top = 60.dp),
+            leadingIcon = leadingEmailIcon,
+            valueChange = {
+                if (errorMessage.value.isNotEmpty()) {
+                    errorMessage.value = ""
+                }
+                email = it
+            })
+
+        val leadingPassIcon = Elements.editTextIcon(Res.drawable.beyond_login_icon_lock)
+        val trailingPassIcon = Elements.editTextIcon(
+            Res.drawable.beyond_login_eye,
+            Res.string.beyond_login_desc_show_password
+        ) {
+            passwordVisible.value = if (passwordVisible.value == KeyboardType.Text)
+                KeyboardType.Password else KeyboardType.Text
+        }
+        Elements.EditText(
+            stringResource(Res.string.beyond_login_login_password),
+            Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp),
+            passwordVisible,
+            focusNext = false,
+            leadingIcon = leadingPassIcon,
+            trailingIcon = trailingPassIcon,
+            valueChange = {
+                if (errorMessage.value.isNotEmpty()) {
+                    errorMessage.value = ""
+                }
+                password = it
+            }
+        ) {
+            keyboardController?.hide()
+        }
+
+        Elements.IconButton(stringResource(Res.string.beyond_login_login_button),
+            Res.drawable.beyond_login_login,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 20.dp, end = 20.dp, top = 50.dp),
+            buttonEnabled = loginButtonEnabled
+        ) {
+            keyboardController?.hide()
+
+            if (email.isEmpty()) {
+                errorMessage.value = fieldEmailFill
+                return@IconButton
+            }
+            if (password.isEmpty()) {
+                errorMessage.value = fieldPasswordFill
+                return@IconButton
+            }
+
+            doLogin(coroutine, email, password, loginButtonEnabled)
+        }
+
+        if (errorMessage.value.isNotEmpty()) {
+            Text(errorMessage.value,
+                Modifier
+                    .align(alignment = Alignment.CenterHorizontally)
+                    .padding(top = 40.dp, start = 40.dp, end = 40.dp),
+                color = Colors.text_error,
+                fontSize = 14.sp)
+        }
+
+        Row(
+            Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(stringResource(Res.string.beyond_login_recovery_lost_password),
+                Modifier
+                    .padding(top = 20.dp)
+                    .align(Alignment.CenterVertically)
+                    .height(48.dp)
+                    .wrapContentHeight()
+                    .clickable {
+                        coroutine.launch {
+                            RecoveryView.init(self)
+                        }
+                    },
+                color = Colors.text_white,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center)
+        }
+    }
+
+    @Composable
+    private fun ColumnScope.Footer(coroutine: CoroutineScope) {
+        Spacer(modifier = Modifier.weight(1f))
+
+        Row(
+            Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(stringResource(Res.string.beyond_login_login_no_account),
+                Modifier
+                    .align(Alignment.CenterVertically)
+                    .height(48.dp)
+                    .wrapContentHeight(),
+                color = Colors.text_white,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center)
+
+            Box(
+                Modifier
+                    .padding(start = 10.dp)
+                    .height(48.dp)
+                    .clickable {
+                        coroutine.launch {
+                            RegisterView.init(self)
+                        }
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(stringResource(Res.string.beyond_login_login_no_account_register),
+                    Modifier.padding(start = 10.dp, end = 10.dp),
+                    color = Colors.text_highlight,
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp,
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
     }
 
     private fun doLogin(coroutine: CoroutineScope, email: String, password: String,
