@@ -63,8 +63,6 @@ import climbeyond.beyondlogin.generated.resources.beyond_login_success_return
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.jetbrains.compose.resources.stringResource
@@ -204,10 +202,10 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
     @Composable
     private fun ColumnScope.Content(coroutine: CoroutineScope) {
         when (subView.value) {
-            VIEWS.EMAIL -> subEmail(coroutine)
-            VIEWS.CONFIRMATION -> subConfirmation(coroutine)
-            VIEWS.RESET -> subReset(coroutine)
-            VIEWS.SUCCESS -> subSuccess(coroutine)
+            VIEWS.EMAIL -> SubEmail(coroutine)
+            VIEWS.CONFIRMATION -> SubConfirmation(coroutine)
+            VIEWS.RESET -> SubReset(coroutine)
+            VIEWS.SUCCESS -> SubSuccess(coroutine)
         }
 
         if (errorMessage.value.isNotEmpty()) {
@@ -267,7 +265,7 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
     }
 
     @Composable
-    private fun subEmail(coroutine: CoroutineScope) {
+    private fun SubEmail(coroutine: CoroutineScope) {
         val fieldEmailFill = stringResource(Res.string.beyond_login_field_email_fill)
         val keyboardController = LocalSoftwareKeyboardController.current
         val recoveryButtonEnabled = remember { mutableStateOf(true) }
@@ -302,7 +300,7 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
     }
 
     @Composable
-    private fun subConfirmation(coroutine: CoroutineScope) {
+    private fun SubConfirmation(coroutine: CoroutineScope) {
         val focusManager = LocalFocusManager.current
 
         Text(confirmationText.value,
@@ -319,17 +317,17 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
         ) {
-            digitField(coroutine, focusManager, 0)
-            digitField(coroutine, focusManager, 1)
-            digitField(coroutine, focusManager, 2)
-            digitField(coroutine, focusManager, 3)
-            digitField(coroutine, focusManager, 4)
-            digitField(coroutine, focusManager, 5)
+            DigitField(coroutine, focusManager, 0)
+            DigitField(coroutine, focusManager, 1)
+            DigitField(coroutine, focusManager, 2)
+            DigitField(coroutine, focusManager, 3)
+            DigitField(coroutine, focusManager, 4)
+            DigitField(coroutine, focusManager, 5)
         }
     }
 
     @Composable
-    private fun digitField(coroutine: CoroutineScope, focusManager: FocusManager, index: Int) {
+    private fun DigitField(coroutine: CoroutineScope, focusManager: FocusManager, index: Int) {
         Elements.EditText("", Modifier
             .padding(horizontal = 3.dp)
             .width(50.dp)
@@ -355,7 +353,7 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
     }
 
     @Composable
-    private fun subReset(coroutine: CoroutineScope) {
+    private fun SubReset(coroutine: CoroutineScope) {
         val keyboardController = LocalSoftwareKeyboardController.current
         val fieldPasswordFill = stringResource(Res.string.beyond_login_field_password_fill)
 
@@ -395,7 +393,7 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
     }
 
     @Composable
-    private fun subSuccess(coroutine: CoroutineScope) {
+    private fun SubSuccess(coroutine: CoroutineScope) {
         Column(
                 Modifier
                     .padding(top = 60.dp)

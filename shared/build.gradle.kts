@@ -31,6 +31,7 @@ kotlin {
             baseName = "BeyondLogin"
             xcf.add(this)
             isStatic = true
+            binaryOption("bundleId","app.climbeyond.beyondlogin.ios")
         }
     }
 

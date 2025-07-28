@@ -7,7 +7,6 @@ import app.climbeyond.beyondlogin.helpers.BLLogger
 import app.climbeyond.beyondlogin.helpers.SharedPreferenceManager
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 
@@ -79,10 +78,9 @@ object Settings {
                 BLLogger.tag = settings.logTag
                 BLLogger.logDebug("Settings loaded")
                 return settings
-
-            } ?: run {
-                throw BeyondException("BeyondLogin settings not available")
             }
+
+            throw BeyondException("BeyondLogin settings not available")
         }
     }
 }
