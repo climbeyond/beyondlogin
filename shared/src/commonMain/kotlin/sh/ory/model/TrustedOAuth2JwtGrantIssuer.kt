@@ -41,10 +41,10 @@ data class TrustedOAuth2JwtGrantIssuer (
     @SerialName(value = "allow_any_subject") val allowAnySubject: kotlin.Boolean? = null,
 
     /* The \"created_at\" indicates, when grant was created. */
-    @SerialName(value = "created_at") val createdAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "created_at") val createdAt: @Contextual kotlin.time.Instant? = null,
 
     /* The \"expires_at\" indicates, when grant will expire, so we will reject assertion from \"issuer\" targeting \"subject\". */
-    @SerialName(value = "expires_at") val expiresAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "expires_at") val expiresAt: @Contextual kotlin.time.Instant? = null,
 
     @SerialName(value = "id") val id: kotlin.String? = null,
 

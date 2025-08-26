@@ -34,7 +34,7 @@ data class MetricsDatapoint (
     @SerialName(value = "count") @Required val count: kotlin.Long,
 
     /* The time of the bucket */
-    @SerialName(value = "time") @Required val time: kotlinx.datetime.Instant
+    @SerialName(value = "time") @Required val time: @Contextual kotlin.time.Instant
 
 )
 

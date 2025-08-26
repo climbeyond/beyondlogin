@@ -50,7 +50,7 @@ data class OAuth2ConsentSession (
 
     @SerialName(value = "grant_scope") val grantScope: kotlin.Array<kotlin.String>? = null,
 
-    @SerialName(value = "handled_at") val handledAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "handled_at") val handledAt: @Contextual kotlin.time.Instant? = null,
 
     /* Remember Consent  Remember, if set to true, tells ORY Hydra to remember this consent authorization and reuse it if the same client asks the same user for the same, or a subset of, scope. */
     @SerialName(value = "remember") val remember: kotlin.Boolean? = null,

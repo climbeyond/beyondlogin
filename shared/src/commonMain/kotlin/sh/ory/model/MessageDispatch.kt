@@ -35,7 +35,7 @@ import kotlinx.serialization.encoding.*
 data class MessageDispatch (
 
     /* CreatedAt is a helper struct field for gobuffalo.pop. */
-    @SerialName(value = "created_at") @Required val createdAt: kotlinx.datetime.Instant,
+    @SerialName(value = "created_at") @Required val createdAt: @Contextual kotlin.time.Instant,
 
     /* The ID of this message dispatch */
     @SerialName(value = "id") @Required val id: kotlin.String,
@@ -47,7 +47,7 @@ data class MessageDispatch (
     @SerialName(value = "status") @Required val status: MessageDispatch.Status,
 
     /* UpdatedAt is a helper struct field for gobuffalo.pop. */
-    @SerialName(value = "updated_at") @Required val updatedAt: kotlinx.datetime.Instant,
+    @SerialName(value = "updated_at") @Required val updatedAt: @Contextual kotlin.time.Instant,
 
     @SerialName(value = "error") val error: kotlin.String? = null
 

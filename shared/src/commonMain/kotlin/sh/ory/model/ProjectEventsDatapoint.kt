@@ -39,7 +39,7 @@ data class ProjectEventsDatapoint (
     @SerialName(value = "name") @Required val name: kotlin.String,
 
     /* Time of occurence */
-    @SerialName(value = "timestamp") @Required val timestamp: kotlinx.datetime.Instant
+    @SerialName(value = "timestamp") @Required val timestamp: @Contextual kotlin.time.Instant
 
 )
 

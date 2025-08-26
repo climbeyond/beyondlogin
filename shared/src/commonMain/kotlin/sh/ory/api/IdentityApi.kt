@@ -618,7 +618,7 @@ open class IdentityApi : ApiClient {
         companion object : KSerializer<ListIdentitiesResponse> {
             private val serializer: KSerializer<List<Identity>> = serializer<List<Identity>>()
             override val descriptor = serializer.descriptor
-            override fun serialize(encoder: Encoder, obj: ListIdentitiesResponse) = serializer.serialize(encoder, obj.value)
+            override fun serialize(encoder: Encoder, value: ListIdentitiesResponse) = serializer.serialize(encoder, value.value)
             override fun deserialize(decoder: Decoder) = ListIdentitiesResponse(serializer.deserialize(decoder))
         }
     }
@@ -667,7 +667,7 @@ open class IdentityApi : ApiClient {
         companion object : KSerializer<ListIdentitySchemasResponse> {
             private val serializer: KSerializer<List<IdentitySchemaContainer>> = serializer<List<IdentitySchemaContainer>>()
             override val descriptor = serializer.descriptor
-            override fun serialize(encoder: Encoder, obj: ListIdentitySchemasResponse) = serializer.serialize(encoder, obj.value)
+            override fun serialize(encoder: Encoder, value: ListIdentitySchemasResponse) = serializer.serialize(encoder, value.value)
             override fun deserialize(decoder: Decoder) = ListIdentitySchemasResponse(serializer.deserialize(decoder))
         }
     }
@@ -719,7 +719,7 @@ open class IdentityApi : ApiClient {
         companion object : KSerializer<ListIdentitySessionsResponse> {
             private val serializer: KSerializer<List<Session>> = serializer<List<Session>>()
             override val descriptor = serializer.descriptor
-            override fun serialize(encoder: Encoder, obj: ListIdentitySessionsResponse) = serializer.serialize(encoder, obj.value)
+            override fun serialize(encoder: Encoder, value: ListIdentitySessionsResponse) = serializer.serialize(encoder, value.value)
             override fun deserialize(decoder: Decoder) = ListIdentitySessionsResponse(serializer.deserialize(decoder))
         }
     }
@@ -783,7 +783,7 @@ open class IdentityApi : ApiClient {
         companion object : KSerializer<ListSessionsResponse> {
             private val serializer: KSerializer<List<Session>> = serializer<List<Session>>()
             override val descriptor = serializer.descriptor
-            override fun serialize(encoder: Encoder, obj: ListSessionsResponse) = serializer.serialize(encoder, obj.value)
+            override fun serialize(encoder: Encoder, value: ListSessionsResponse) = serializer.serialize(encoder, value.value)
             override fun deserialize(decoder: Decoder) = ListSessionsResponse(serializer.deserialize(decoder))
         }
     }
@@ -825,7 +825,7 @@ open class IdentityApi : ApiClient {
         companion object : KSerializer<PatchIdentityRequest> {
             private val serializer: KSerializer<List<JsonPatch>> = serializer<List<JsonPatch>>()
             override val descriptor = serializer.descriptor
-            override fun serialize(encoder: Encoder, obj: PatchIdentityRequest) = serializer.serialize(encoder, obj.value)
+            override fun serialize(encoder: Encoder, value: PatchIdentityRequest) = serializer.serialize(encoder, value.value)
             override fun deserialize(decoder: Decoder) = PatchIdentityRequest(serializer.deserialize(decoder))
         }
     }

@@ -9,10 +9,10 @@ import app.climbeyond.beyondlogin.helpers.SharedPreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import sh.ory.model.PerformNativeLogoutBody
 import sh.ory.model.Session
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 
 data class SessionInfo(

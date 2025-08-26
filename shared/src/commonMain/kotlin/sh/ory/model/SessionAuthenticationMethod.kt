@@ -37,7 +37,7 @@ data class SessionAuthenticationMethod (
     @SerialName(value = "aal") val aal: AuthenticatorAssuranceLevel? = null,
 
     /* When the authentication challenge was completed. */
-    @SerialName(value = "completed_at") val completedAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "completed_at") val completedAt: @Contextual kotlin.time.Instant? = null,
 
     @SerialName(value = "method") val method: SessionAuthenticationMethod.Method? = null,
 

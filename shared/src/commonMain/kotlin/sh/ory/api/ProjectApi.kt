@@ -327,7 +327,7 @@ open class ProjectApi : ApiClient {
         companion object : KSerializer<GetProjectMembersResponse> {
             private val serializer: KSerializer<List<ProjectMember>> = serializer<List<ProjectMember>>()
             override val descriptor = serializer.descriptor
-            override fun serialize(encoder: Encoder, obj: GetProjectMembersResponse) = serializer.serialize(encoder, obj.value)
+            override fun serialize(encoder: Encoder, value: GetProjectMembersResponse) = serializer.serialize(encoder, value.value)
             override fun deserialize(decoder: Decoder) = GetProjectMembersResponse(serializer.deserialize(decoder))
         }
     }
@@ -402,7 +402,7 @@ open class ProjectApi : ApiClient {
         companion object : KSerializer<ListProjectApiKeysResponse> {
             private val serializer: KSerializer<List<ProjectApiKey>> = serializer<List<ProjectApiKey>>()
             override val descriptor = serializer.descriptor
-            override fun serialize(encoder: Encoder, obj: ListProjectApiKeysResponse) = serializer.serialize(encoder, obj.value)
+            override fun serialize(encoder: Encoder, value: ListProjectApiKeysResponse) = serializer.serialize(encoder, value.value)
             override fun deserialize(decoder: Decoder) = ListProjectApiKeysResponse(serializer.deserialize(decoder))
         }
     }
@@ -443,7 +443,7 @@ open class ProjectApi : ApiClient {
         companion object : KSerializer<ListProjectsResponse> {
             private val serializer: KSerializer<List<ProjectMetadata>> = serializer<List<ProjectMetadata>>()
             override val descriptor = serializer.descriptor
-            override fun serialize(encoder: Encoder, obj: ListProjectsResponse) = serializer.serialize(encoder, obj.value)
+            override fun serialize(encoder: Encoder, value: ListProjectsResponse) = serializer.serialize(encoder, value.value)
             override fun deserialize(decoder: Decoder) = ListProjectsResponse(serializer.deserialize(decoder))
         }
     }
@@ -485,7 +485,7 @@ open class ProjectApi : ApiClient {
         companion object : KSerializer<PatchProjectRequest> {
             private val serializer: KSerializer<List<JsonPatch>> = serializer<List<JsonPatch>>()
             override val descriptor = serializer.descriptor
-            override fun serialize(encoder: Encoder, obj: PatchProjectRequest) = serializer.serialize(encoder, obj.value)
+            override fun serialize(encoder: Encoder, value: PatchProjectRequest) = serializer.serialize(encoder, value.value)
             override fun deserialize(decoder: Decoder) = PatchProjectRequest(serializer.deserialize(decoder))
         }
     }

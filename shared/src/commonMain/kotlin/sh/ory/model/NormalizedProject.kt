@@ -43,7 +43,7 @@ import kotlinx.serialization.encoding.*
 data class NormalizedProject (
 
     /* The Project's Creation Date */
-    @SerialName(value = "created_at") @Required val createdAt: kotlinx.datetime.Instant,
+    @SerialName(value = "created_at") @Required val createdAt: @Contextual kotlin.time.Instant,
 
     @SerialName(value = "current_revision") @Required val currentRevision: NormalizedProjectRevision,
 
@@ -62,7 +62,7 @@ data class NormalizedProject (
     @SerialName(value = "state") @Required val state: NormalizedProject.State,
 
     /* Last Time Project was Updated */
-    @SerialName(value = "updated_at") @Required val updatedAt: kotlinx.datetime.Instant,
+    @SerialName(value = "updated_at") @Required val updatedAt: @Contextual kotlin.time.Instant,
 
     @SerialName(value = "workspace_id") @Required val workspaceId: kotlin.String?,
 

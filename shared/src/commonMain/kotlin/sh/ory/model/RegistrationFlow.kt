@@ -45,13 +45,13 @@ import kotlinx.serialization.encoding.*
 data class RegistrationFlow (
 
     /* ExpiresAt is the time (UTC) when the flow expires. If the user still wishes to log in, a new flow has to be initiated. */
-    @SerialName(value = "expires_at") @Required val expiresAt: kotlinx.datetime.Instant,
+    @SerialName(value = "expires_at") @Required val expiresAt: @Contextual kotlin.time.Instant,
 
     /* ID represents the flow's unique ID. When performing the registration flow, this represents the id in the registration ui's query parameter: http://<selfservice.flows.registration.ui_url>/?flow=<id> */
     @SerialName(value = "id") @Required val id: kotlin.String,
 
     /* IssuedAt is the time (UTC) when the flow occurred. */
-    @SerialName(value = "issued_at") @Required val issuedAt: kotlinx.datetime.Instant,
+    @SerialName(value = "issued_at") @Required val issuedAt: @Contextual kotlin.time.Instant,
 
     /* RequestURL is the initial URL that was requested from Ory Kratos. It can be used to forward information contained in the URL's path or query for example. */
     @SerialName(value = "request_url") @Required val requestUrl: kotlin.String,

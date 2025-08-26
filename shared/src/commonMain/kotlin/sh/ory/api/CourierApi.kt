@@ -121,7 +121,7 @@ open class CourierApi : ApiClient {
         companion object : KSerializer<ListCourierMessagesResponse> {
             private val serializer: KSerializer<List<Message>> = serializer<List<Message>>()
             override val descriptor = serializer.descriptor
-            override fun serialize(encoder: Encoder, obj: ListCourierMessagesResponse) = serializer.serialize(encoder, obj.value)
+            override fun serialize(encoder: Encoder, value: ListCourierMessagesResponse) = serializer.serialize(encoder, value.value)
             override fun deserialize(decoder: Decoder) = ListCourierMessagesResponse(serializer.deserialize(decoder))
         }
     }

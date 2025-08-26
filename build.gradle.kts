@@ -10,8 +10,8 @@ plugins {
 
 extra.apply {
     set("androidMinSdk", 26)
-    set("androidTargetSdk", 35)
-    set("androidCompileSdk", 35)
+    set("androidTargetSdk", 36)
+    set("androidCompileSdk", 36)
     set("versionMajor", 0)
     set("versionMinor", 3)
     set("versionPatch", 4)

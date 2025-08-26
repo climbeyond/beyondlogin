@@ -34,13 +34,13 @@ import kotlinx.serialization.encoding.*
 
 data class WorkspaceMeta (
 
-    @SerialName(value = "created_at") @Required val createdAt: kotlinx.datetime.Instant,
+    @SerialName(value = "created_at") @Required val createdAt: @Contextual kotlin.time.Instant,
 
     @SerialName(value = "id") @Required val id: kotlin.String,
 
     @SerialName(value = "name") @Required val name: kotlin.String,
 
-    @SerialName(value = "updated_at") @Required val updatedAt: kotlinx.datetime.Instant,
+    @SerialName(value = "updated_at") @Required val updatedAt: @Contextual kotlin.time.Instant,
 
     @SerialName(value = "subscription_id") val subscriptionId: kotlin.String? = null,
 

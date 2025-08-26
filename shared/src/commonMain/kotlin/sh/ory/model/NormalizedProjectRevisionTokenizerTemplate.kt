@@ -40,7 +40,7 @@ data class NormalizedProjectRevisionTokenizerTemplate (
     @SerialName(value = "claims_mapper_url") val claimsMapperUrl: kotlin.String? = null,
 
     /* The Project's Revision Creation Date */
-    @SerialName(value = "created_at") val createdAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "created_at") val createdAt: @Contextual kotlin.time.Instant? = null,
 
     /* The revision ID. */
     @SerialName(value = "id") val id: kotlin.String? = null,
@@ -58,7 +58,7 @@ data class NormalizedProjectRevisionTokenizerTemplate (
     @SerialName(value = "ttl") val ttl: kotlin.String? = "1m",
 
     /* Last Time Project's Revision was Updated */
-    @SerialName(value = "updated_at") val updatedAt: kotlinx.datetime.Instant? = null
+    @SerialName(value = "updated_at") val updatedAt: @Contextual kotlin.time.Instant? = null
 
 )
 

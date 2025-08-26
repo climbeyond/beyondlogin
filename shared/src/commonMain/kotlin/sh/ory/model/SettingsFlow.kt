@@ -45,7 +45,7 @@ import kotlinx.serialization.json.JsonObject
 data class SettingsFlow (
 
     /* ExpiresAt is the time (UTC) when the flow expires. If the user still wishes to update the setting, a new flow has to be initiated. */
-    @SerialName(value = "expires_at") @Required val expiresAt: kotlinx.datetime.Instant,
+    @SerialName(value = "expires_at") @Required val expiresAt: @Contextual kotlin.time.Instant,
 
     /* ID represents the flow's unique ID. When performing the settings flow, this represents the id in the settings ui's query parameter: http://<selfservice.flows.settings.ui_url>?flow=<id> */
     @SerialName(value = "id") @Required val id: kotlin.String,
@@ -53,7 +53,7 @@ data class SettingsFlow (
     @SerialName(value = "identity") @Required val identity: Identity,
 
     /* IssuedAt is the time (UTC) when the flow occurred. */
-    @SerialName(value = "issued_at") @Required val issuedAt: kotlinx.datetime.Instant,
+    @SerialName(value = "issued_at") @Required val issuedAt: @Contextual kotlin.time.Instant,
 
     /* RequestURL is the initial URL that was requested from Ory Kratos. It can be used to forward information contained in the URL's path or query for example. */
     @SerialName(value = "request_url") @Required val requestUrl: kotlin.String,

@@ -43,13 +43,13 @@ import kotlinx.serialization.json.JsonObject
 data class RecoveryFlow (
 
     /* ExpiresAt is the time (UTC) when the request expires. If the user still wishes to update the setting, a new request has to be initiated. */
-    @SerialName(value = "expires_at") @Required val expiresAt: kotlinx.datetime.Instant,
+    @SerialName(value = "expires_at") @Required val expiresAt: @Contextual kotlin.time.Instant,
 
     /* ID represents the request's unique ID. When performing the recovery flow, this represents the id in the recovery ui's query parameter: http://<selfservice.flows.recovery.ui_url>?request=<id> */
     @SerialName(value = "id") @Required val id: kotlin.String,
 
     /* IssuedAt is the time (UTC) when the request occurred. */
-    @SerialName(value = "issued_at") @Required val issuedAt: kotlinx.datetime.Instant,
+    @SerialName(value = "issued_at") @Required val issuedAt: @Contextual kotlin.time.Instant,
 
     /* RequestURL is the initial URL that was requested from Ory Kratos. It can be used to forward information contained in the URL's path or query for example. */
     @SerialName(value = "request_url") @Required val requestUrl: kotlin.String,

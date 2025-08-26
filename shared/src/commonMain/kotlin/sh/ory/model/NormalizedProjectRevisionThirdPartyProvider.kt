@@ -76,7 +76,7 @@ data class NormalizedProjectRevisionThirdPartyProvider (
     @SerialName(value = "client_secret") val clientSecret: kotlin.String? = null,
 
     /* The Project's Revision Creation Date */
-    @SerialName(value = "created_at") val createdAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "created_at") val createdAt: @Contextual kotlin.time.Instant? = null,
 
     @SerialName(value = "id") val id: kotlin.String? = null,
 
@@ -113,7 +113,7 @@ data class NormalizedProjectRevisionThirdPartyProvider (
     @SerialName(value = "token_url") val tokenUrl: kotlin.String? = null,
 
     /* Last Time Project's Revision was Updated */
-    @SerialName(value = "updated_at") val updatedAt: kotlinx.datetime.Instant? = null
+    @SerialName(value = "updated_at") val updatedAt: @Contextual kotlin.time.Instant? = null
 
 ) {
 

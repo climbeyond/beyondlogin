@@ -37,7 +37,7 @@ data class IdentityCredentials (
     @SerialName(value = "config") val config: kotlin.String? = null,
 
     /* CreatedAt is a helper struct field for gobuffalo.pop. */
-    @SerialName(value = "created_at") val createdAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "created_at") val createdAt: @Contextual kotlin.time.Instant? = null,
 
     /* Identifiers represents a list of unique identifiers this credential type matches. */
     @SerialName(value = "identifiers") val identifiers: kotlin.Array<kotlin.String>? = null,
@@ -46,7 +46,7 @@ data class IdentityCredentials (
     @SerialName(value = "type") val type: IdentityCredentials.Type? = null,
 
     /* UpdatedAt is a helper struct field for gobuffalo.pop. */
-    @SerialName(value = "updated_at") val updatedAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "updated_at") val updatedAt: @Contextual kotlin.time.Instant? = null,
 
     /* Version refers to the version of the credential. Useful when changing the config schema. */
     @SerialName(value = "version") val version: kotlin.Long? = null

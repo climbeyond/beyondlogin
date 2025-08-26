@@ -45,7 +45,7 @@ data class CustomDomain (
 
     @SerialName(value = "cors_enabled") val corsEnabled: kotlin.Boolean? = null,
 
-    @SerialName(value = "created_at") val createdAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "created_at") val createdAt: @Contextual kotlin.time.Instant? = null,
 
     @SerialName(value = "custom_ui_base_url") val customUiBaseUrl: kotlin.String? = null,
 
@@ -55,7 +55,7 @@ data class CustomDomain (
 
     @SerialName(value = "ssl_status") val sslStatus: CustomDomain.SslStatus? = null,
 
-    @SerialName(value = "updated_at") val updatedAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "updated_at") val updatedAt: @Contextual kotlin.time.Instant? = null,
 
     @SerialName(value = "verification_errors") val verificationErrors: kotlin.Array<kotlin.String>? = null,
 

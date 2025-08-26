@@ -868,7 +868,7 @@ open class FrontendApi : ApiClient {
         companion object : KSerializer<ListMySessionsResponse> {
             private val serializer: KSerializer<List<Session>> = serializer<List<Session>>()
             override val descriptor = serializer.descriptor
-            override fun serialize(encoder: Encoder, obj: ListMySessionsResponse) = serializer.serialize(encoder, obj.value)
+            override fun serialize(encoder: Encoder, value: ListMySessionsResponse) = serializer.serialize(encoder, value.value)
             override fun deserialize(decoder: Decoder) = ListMySessionsResponse(serializer.deserialize(decoder))
         }
     }

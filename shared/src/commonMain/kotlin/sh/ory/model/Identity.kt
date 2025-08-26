@@ -59,7 +59,7 @@ data class Identity (
     @SerialName(value = "traits") @Required val traits: JsonObject?,
 
     /* CreatedAt is a helper struct field for gobuffalo.pop. */
-    @SerialName(value = "created_at") val createdAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "created_at") val createdAt: @Contextual kotlin.time.Instant? = null,
 
     /* Credentials represents all credentials that can be used for authenticating this identity. */
     @SerialName(value = "credentials") val credentials: kotlin.collections.Map<kotlin.String, IdentityCredentials>? = null,
@@ -78,10 +78,10 @@ data class Identity (
     /* State is the identity's state.  This value has currently no effect. active StateActive inactive StateInactive */
     @SerialName(value = "state") val state: Identity.State? = null,
 
-    @SerialName(value = "state_changed_at") val stateChangedAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "state_changed_at") val stateChangedAt: @Contextual kotlin.time.Instant? = null,
 
     /* UpdatedAt is a helper struct field for gobuffalo.pop. */
-    @SerialName(value = "updated_at") val updatedAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "updated_at") val updatedAt: @Contextual kotlin.time.Instant? = null,
 
     /* VerifiableAddresses contains all the addresses that can be verified by the user. */
     @SerialName(value = "verifiable_addresses") val verifiableAddresses: kotlin.Array<VerifiableIdentityAddress>? = null

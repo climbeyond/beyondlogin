@@ -53,7 +53,7 @@ data class NormalizedProjectRevisionHook (
     @SerialName(value = "hook") @Required val hook: kotlin.String,
 
     /* The Project's Revision Creation Date */
-    @SerialName(value = "created_at") val createdAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "created_at") val createdAt: @Contextual kotlin.time.Instant? = null,
 
     /* ID of the entry */
     @SerialName(value = "id") val id: kotlin.String? = null,
@@ -62,7 +62,7 @@ data class NormalizedProjectRevisionHook (
     @SerialName(value = "project_revision_id") val projectRevisionId: kotlin.String? = null,
 
     /* Last Time Project's Revision was Updated */
-    @SerialName(value = "updated_at") val updatedAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "updated_at") val updatedAt: @Contextual kotlin.time.Instant? = null,
 
     /* Whether to send the API Key in the HTTP Header or as a HTTP Cookie */
     @SerialName(value = "web_hook_config_auth_api_key_in") val webHookConfigAuthApiKeyIn: kotlin.String? = null,

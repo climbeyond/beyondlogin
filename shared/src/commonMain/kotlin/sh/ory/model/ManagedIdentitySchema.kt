@@ -42,7 +42,7 @@ data class ManagedIdentitySchema (
     @SerialName(value = "blob_url") @Required val blobUrl: kotlin.String,
 
     /* The Schema's Creation Date */
-    @SerialName(value = "created_at") @Required val createdAt: kotlinx.datetime.Instant,
+    @SerialName(value = "created_at") @Required val createdAt: @Contextual kotlin.time.Instant,
 
     /* The schema's ID. */
     @SerialName(value = "id") @Required val id: kotlin.String,
@@ -51,7 +51,7 @@ data class ManagedIdentitySchema (
     @SerialName(value = "name") @Required val name: kotlin.String,
 
     /* Last Time Schema was Updated */
-    @SerialName(value = "updated_at") @Required val updatedAt: kotlinx.datetime.Instant,
+    @SerialName(value = "updated_at") @Required val updatedAt: @Contextual kotlin.time.Instant,
 
     /* The Content Hash  Contains a hash of the schema's content. */
     @SerialName(value = "content_hash") val contentHash: kotlin.String? = null

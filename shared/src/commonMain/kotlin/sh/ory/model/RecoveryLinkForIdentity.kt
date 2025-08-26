@@ -34,7 +34,7 @@ data class RecoveryLinkForIdentity (
     @SerialName(value = "recovery_link") @Required val recoveryLink: kotlin.String,
 
     /* Recovery Link Expires At  The timestamp when the recovery link expires. */
-    @SerialName(value = "expires_at") val expiresAt: kotlinx.datetime.Instant? = null
+    @SerialName(value = "expires_at") val expiresAt: @Contextual kotlin.time.Instant? = null
 
 )
 

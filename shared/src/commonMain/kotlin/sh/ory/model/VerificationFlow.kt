@@ -54,10 +54,10 @@ data class VerificationFlow (
     @SerialName(value = "active") val active: kotlin.String? = null,
 
     /* ExpiresAt is the time (UTC) when the request expires. If the user still wishes to verify the address, a new request has to be initiated. */
-    @SerialName(value = "expires_at") val expiresAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "expires_at") val expiresAt: @Contextual kotlin.time.Instant? = null,
 
     /* IssuedAt is the time (UTC) when the request occurred. */
-    @SerialName(value = "issued_at") val issuedAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "issued_at") val issuedAt: @Contextual kotlin.time.Instant? = null,
 
     /* RequestURL is the initial URL that was requested from Ory Kratos. It can be used to forward information contained in the URL's path or query for example. */
     @SerialName(value = "request_url") val requestUrl: kotlin.String? = null,

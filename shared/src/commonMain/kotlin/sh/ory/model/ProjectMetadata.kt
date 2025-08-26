@@ -42,7 +42,7 @@ import kotlinx.serialization.encoding.*
 data class ProjectMetadata (
 
     /* The Project's Creation Date */
-    @SerialName(value = "created_at") @Required val createdAt: kotlinx.datetime.Instant,
+    @SerialName(value = "created_at") @Required val createdAt: @Contextual kotlin.time.Instant,
 
     /* The environment of the project. prod Production stage Staging dev Development */
     @SerialName(value = "environment") @Required val environment: ProjectMetadata.Environment,
@@ -59,7 +59,7 @@ data class ProjectMetadata (
     @SerialName(value = "state") @Required val state: ProjectMetadata.State,
 
     /* Last Time Project was Updated */
-    @SerialName(value = "updated_at") @Required val updatedAt: kotlinx.datetime.Instant,
+    @SerialName(value = "updated_at") @Required val updatedAt: @Contextual kotlin.time.Instant,
 
     /* The project's slug */
     @SerialName(value = "slug") val slug: kotlin.String? = null,

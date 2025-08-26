@@ -49,15 +49,15 @@ data class VerifiableIdentityAddress (
     @SerialName(value = "via") @Required val via: VerifiableIdentityAddress.Via,
 
     /* When this entry was created */
-    @SerialName(value = "created_at") val createdAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "created_at") val createdAt: @Contextual kotlin.time.Instant? = null,
 
     /* The ID */
     @SerialName(value = "id") val id: kotlin.String? = null,
 
     /* When this entry was last updated */
-    @SerialName(value = "updated_at") val updatedAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "updated_at") val updatedAt: @Contextual kotlin.time.Instant? = null,
 
-    @SerialName(value = "verified_at") val verifiedAt: kotlinx.datetime.Instant? = null
+    @SerialName(value = "verified_at") val verifiedAt: @Contextual kotlin.time.Instant? = null
 
 ) {
 

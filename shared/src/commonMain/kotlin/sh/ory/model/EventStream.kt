@@ -34,7 +34,7 @@ import kotlinx.serialization.encoding.*
 
 data class EventStream (
 
-    @SerialName(value = "created_at") val createdAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "created_at") val createdAt: @Contextual kotlin.time.Instant? = null,
 
     @SerialName(value = "id") val id: kotlin.String? = null,
 
@@ -44,7 +44,7 @@ data class EventStream (
 
     @SerialName(value = "type") val type: kotlin.String? = null,
 
-    @SerialName(value = "updated_at") val updatedAt: kotlinx.datetime.Instant? = null
+    @SerialName(value = "updated_at") val updatedAt: @Contextual kotlin.time.Instant? = null
 
 )
 

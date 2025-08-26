@@ -50,13 +50,13 @@ import kotlinx.serialization.encoding.*
 data class LoginFlow (
 
     /* ExpiresAt is the time (UTC) when the flow expires. If the user still wishes to log in, a new flow has to be initiated. */
-    @SerialName(value = "expires_at") @Required val expiresAt: kotlinx.datetime.Instant,
+    @SerialName(value = "expires_at") @Required val expiresAt: @Contextual kotlin.time.Instant,
 
     /* ID represents the flow's unique ID. When performing the login flow, this represents the id in the login UI's query parameter: http://<selfservice.flows.login.ui_url>/?flow=<flow_id> */
     @SerialName(value = "id") @Required val id: kotlin.String,
 
     /* IssuedAt is the time (UTC) when the flow started. */
-    @SerialName(value = "issued_at") @Required val issuedAt: kotlinx.datetime.Instant,
+    @SerialName(value = "issued_at") @Required val issuedAt: @Contextual kotlin.time.Instant,
 
     /* RequestURL is the initial URL that was requested from Ory Kratos. It can be used to forward information contained in the URL's path or query for example. */
     @SerialName(value = "request_url") @Required val requestUrl: kotlin.String,
@@ -73,7 +73,7 @@ data class LoginFlow (
     @SerialName(value = "active") val active: LoginFlow.Active? = null,
 
     /* CreatedAt is a helper struct field for gobuffalo.pop. */
-    @SerialName(value = "created_at") val createdAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "created_at") val createdAt: @Contextual kotlin.time.Instant? = null,
 
     /* Ory OAuth 2.0 Login Challenge.  This value is set using the `login_challenge` query parameter of the registration and login endpoints. If set will cooperate with Ory OAuth2 and OpenID to act as an OAuth2 server / OpenID Provider. */
     @SerialName(value = "oauth2_login_challenge") val oauth2LoginChallenge: kotlin.String? = null,
@@ -97,7 +97,7 @@ data class LoginFlow (
     @SerialName(value = "transient_payload") val transientPayload: kotlin.String? = null,
 
     /* UpdatedAt is a helper struct field for gobuffalo.pop. */
-    @SerialName(value = "updated_at") val updatedAt: kotlinx.datetime.Instant? = null
+    @SerialName(value = "updated_at") val updatedAt: @Contextual kotlin.time.Instant? = null
 
 ) {
 

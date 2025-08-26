@@ -40,7 +40,7 @@ import kotlinx.serialization.encoding.*
 data class NormalizedProjectRevisionIdentitySchema (
 
     /* The Project's Revision Creation Date */
-    @SerialName(value = "created_at") val createdAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "created_at") val createdAt: @Contextual kotlin.time.Instant? = null,
 
     /* The unique ID of this entry. */
     @SerialName(value = "id") val id: kotlin.String? = null,
@@ -65,7 +65,7 @@ data class NormalizedProjectRevisionIdentitySchema (
     @SerialName(value = "project_revision_id") val projectRevisionId: kotlin.String? = null,
 
     /* Last Time Project's Revision was Updated */
-    @SerialName(value = "updated_at") val updatedAt: kotlinx.datetime.Instant? = null
+    @SerialName(value = "updated_at") val updatedAt: @Contextual kotlin.time.Instant? = null
 
 )
 

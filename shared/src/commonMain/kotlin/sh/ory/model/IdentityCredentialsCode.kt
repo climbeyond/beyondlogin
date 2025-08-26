@@ -33,7 +33,7 @@ data class IdentityCredentialsCode (
     /* The type of the address for this code */
     @SerialName(value = "address_type") val addressType: kotlin.String? = null,
 
-    @SerialName(value = "used_at") val usedAt: kotlinx.datetime.Instant? = null
+    @SerialName(value = "used_at") val usedAt: @Contextual kotlin.time.Instant? = null
 
 )
 

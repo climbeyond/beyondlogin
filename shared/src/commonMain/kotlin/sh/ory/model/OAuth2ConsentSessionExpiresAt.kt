@@ -33,15 +33,15 @@ import kotlinx.serialization.encoding.*
 
 data class OAuth2ConsentSessionExpiresAt (
 
-    @SerialName(value = "access_token") val accessToken: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "access_token") val accessToken: @Contextual kotlin.time.Instant? = null,
 
-    @SerialName(value = "authorize_code") val authorizeCode: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "authorize_code") val authorizeCode: @Contextual kotlin.time.Instant? = null,
 
-    @SerialName(value = "id_token") val idToken: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "id_token") val idToken: @Contextual kotlin.time.Instant? = null,
 
-    @SerialName(value = "par_context") val parContext: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "par_context") val parContext: @Contextual kotlin.time.Instant? = null,
 
-    @SerialName(value = "refresh_token") val refreshToken: kotlinx.datetime.Instant? = null
+    @SerialName(value = "refresh_token") val refreshToken: @Contextual kotlin.time.Instant? = null
 
 )
 

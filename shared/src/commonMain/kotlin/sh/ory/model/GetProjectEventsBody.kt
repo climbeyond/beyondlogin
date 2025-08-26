@@ -36,10 +36,10 @@ import kotlinx.serialization.encoding.*
 data class GetProjectEventsBody (
 
     /* The start RFC3339 date of the time window */
-    @SerialName(value = "from") @Required val from: kotlinx.datetime.Instant,
+    @SerialName(value = "from") @Required val from: @Contextual kotlin.time.Instant,
 
     /* The end RFC3339 date of the time window */
-    @SerialName(value = "to") @Required val to: kotlinx.datetime.Instant,
+    @SerialName(value = "to") @Required val to: @Contextual kotlin.time.Instant,
 
     /* The event name to query for */
     @SerialName(value = "event_name") val eventName: kotlin.String? = null,

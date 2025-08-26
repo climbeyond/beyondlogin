@@ -36,7 +36,7 @@ import kotlinx.serialization.encoding.*
 data class ProjectBranding (
 
     /* The Customization Creation Date */
-    @SerialName(value = "created_at") @Required val createdAt: kotlinx.datetime.Instant,
+    @SerialName(value = "created_at") @Required val createdAt: @Contextual kotlin.time.Instant,
 
     @SerialName(value = "default_theme") @Required val defaultTheme: ProjectBrandingTheme,
 
@@ -49,7 +49,7 @@ data class ProjectBranding (
     @SerialName(value = "themes") @Required val themes: kotlin.Array<ProjectBrandingTheme>,
 
     /* Last Time Branding was Updated */
-    @SerialName(value = "updated_at") @Required val updatedAt: kotlinx.datetime.Instant
+    @SerialName(value = "updated_at") @Required val updatedAt: @Contextual kotlin.time.Instant
 
 )
 

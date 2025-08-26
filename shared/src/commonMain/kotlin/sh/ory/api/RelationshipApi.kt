@@ -276,7 +276,7 @@ open class RelationshipApi : ApiClient {
         companion object : KSerializer<PatchRelationshipsRequest> {
             private val serializer: KSerializer<List<RelationshipPatch>> = serializer<List<RelationshipPatch>>()
             override val descriptor = serializer.descriptor
-            override fun serialize(encoder: Encoder, obj: PatchRelationshipsRequest) = serializer.serialize(encoder, obj.value)
+            override fun serialize(encoder: Encoder, value: PatchRelationshipsRequest) = serializer.serialize(encoder, value.value)
             override fun deserialize(decoder: Decoder) = PatchRelationshipsRequest(serializer.deserialize(decoder))
         }
     }

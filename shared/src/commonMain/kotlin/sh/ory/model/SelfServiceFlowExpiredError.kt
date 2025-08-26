@@ -36,7 +36,7 @@ data class SelfServiceFlowExpiredError (
     @SerialName(value = "error") val error: GenericError? = null,
 
     /* When the flow has expired */
-    @SerialName(value = "expired_at") val expiredAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "expired_at") val expiredAt: @Contextual kotlin.time.Instant? = null,
 
     /* A Duration represents the elapsed time between two instants as an int64 nanosecond count. The representation limits the largest representable duration to approximately 290 years. */
     @SerialName(value = "since") val since: kotlin.Long? = null,

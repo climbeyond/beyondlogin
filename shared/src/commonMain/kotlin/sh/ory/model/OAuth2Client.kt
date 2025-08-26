@@ -116,7 +116,7 @@ data class OAuth2Client (
     @SerialName(value = "contacts") val contacts: kotlin.Array<kotlin.String>? = null,
 
     /* OAuth 2.0 Client Creation Date  CreatedAt returns the timestamp of the client's creation. */
-    @SerialName(value = "created_at") val createdAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "created_at") val createdAt: @Contextual kotlin.time.Instant? = null,
 
     /* OpenID Connect Front-Channel Logout Session Required  Boolean value specifying whether the RP requires that iss (issuer) and sid (session ID) query parameters be included to identify the RP session with the OP when the frontchannel_logout_uri is used. If omitted, the default value is false. */
     @SerialName(value = "frontchannel_logout_session_required") val frontchannelLogoutSessionRequired: kotlin.Boolean? = null,
@@ -197,7 +197,7 @@ data class OAuth2Client (
     @SerialName(value = "tos_uri") val tosUri: kotlin.String? = null,
 
     /* OAuth 2.0 Client Last Update Date  UpdatedAt returns the timestamp of the last update. */
-    @SerialName(value = "updated_at") val updatedAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "updated_at") val updatedAt: @Contextual kotlin.time.Instant? = null,
 
     /* OpenID Connect Request Userinfo Signed Response Algorithm  JWS alg algorithm [JWA] REQUIRED for signing UserInfo Responses. If this is specified, the response will be JWT [JWT] serialized, and signed using JWS. The default, if omitted, is for the UserInfo Response to return the Claims as a UTF-8 encoded JSON object using the application/json content-type. */
     @SerialName(value = "userinfo_signed_response_alg") val userinfoSignedResponseAlg: kotlin.String? = null

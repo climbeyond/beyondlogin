@@ -39,7 +39,7 @@ import kotlinx.serialization.encoding.*
 data class MemberInvite (
 
     /* The Project's Revision Creation Date */
-    @SerialName(value = "created_at") @Required val createdAt: kotlinx.datetime.Instant,
+    @SerialName(value = "created_at") @Required val createdAt: @Contextual kotlin.time.Instant,
 
     /* The invite's ID. */
     @SerialName(value = "id") @Required val id: kotlin.String,
@@ -57,7 +57,7 @@ data class MemberInvite (
     @SerialName(value = "status") @Required val status: MemberInvite.Status,
 
     /* Last Time Project's Revision was Updated */
-    @SerialName(value = "updated_at") @Required val updatedAt: kotlinx.datetime.Instant,
+    @SerialName(value = "updated_at") @Required val updatedAt: @Contextual kotlin.time.Instant,
 
     @SerialName(value = "invitee_id") val inviteeId: kotlin.String? = null,
 

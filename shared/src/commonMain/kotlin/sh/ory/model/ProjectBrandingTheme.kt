@@ -67,7 +67,7 @@ import kotlinx.serialization.encoding.*
 data class ProjectBrandingTheme (
 
     /* The Customization Creation Date. */
-    @SerialName(value = "created_at") @Required val createdAt: kotlinx.datetime.Instant,
+    @SerialName(value = "created_at") @Required val createdAt: @Contextual kotlin.time.Instant,
 
     /* The customization theme ID. */
     @SerialName(value = "id") @Required val id: kotlin.String,
@@ -79,7 +79,7 @@ data class ProjectBrandingTheme (
     @SerialName(value = "project_branding_id") @Required val projectBrandingId: kotlin.String,
 
     /* Last Time Branding was Updated. */
-    @SerialName(value = "updated_at") @Required val updatedAt: kotlinx.datetime.Instant,
+    @SerialName(value = "updated_at") @Required val updatedAt: @Contextual kotlin.time.Instant,
 
     /* AccentDefaultColor is a hex color code used by the Ory Account Experience theme. */
     @SerialName(value = "accent_default_color") val accentDefaultColor: kotlin.String? = null,

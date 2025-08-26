@@ -541,7 +541,7 @@ open class OAuth2Api : ApiClient {
         companion object : KSerializer<ListOAuth2ClientsResponse> {
             private val serializer: KSerializer<List<OAuth2Client>> = serializer<List<OAuth2Client>>()
             override val descriptor = serializer.descriptor
-            override fun serialize(encoder: Encoder, obj: ListOAuth2ClientsResponse) = serializer.serialize(encoder, obj.value)
+            override fun serialize(encoder: Encoder, value: ListOAuth2ClientsResponse) = serializer.serialize(encoder, value.value)
             override fun deserialize(decoder: Decoder) = ListOAuth2ClientsResponse(serializer.deserialize(decoder))
         }
     }
@@ -590,7 +590,7 @@ open class OAuth2Api : ApiClient {
         companion object : KSerializer<ListOAuth2ConsentSessionsResponse> {
             private val serializer: KSerializer<List<OAuth2ConsentSession>> = serializer<List<OAuth2ConsentSession>>()
             override val descriptor = serializer.descriptor
-            override fun serialize(encoder: Encoder, obj: ListOAuth2ConsentSessionsResponse) = serializer.serialize(encoder, obj.value)
+            override fun serialize(encoder: Encoder, value: ListOAuth2ConsentSessionsResponse) = serializer.serialize(encoder, value.value)
             override fun deserialize(decoder: Decoder) = ListOAuth2ConsentSessionsResponse(serializer.deserialize(decoder))
         }
     }
@@ -637,7 +637,7 @@ open class OAuth2Api : ApiClient {
         companion object : KSerializer<ListTrustedOAuth2JwtGrantIssuersResponse> {
             private val serializer: KSerializer<List<TrustedOAuth2JwtGrantIssuer>> = serializer<List<TrustedOAuth2JwtGrantIssuer>>()
             override val descriptor = serializer.descriptor
-            override fun serialize(encoder: Encoder, obj: ListTrustedOAuth2JwtGrantIssuersResponse) = serializer.serialize(encoder, obj.value)
+            override fun serialize(encoder: Encoder, value: ListTrustedOAuth2JwtGrantIssuersResponse) = serializer.serialize(encoder, value.value)
             override fun deserialize(decoder: Decoder) = ListTrustedOAuth2JwtGrantIssuersResponse(serializer.deserialize(decoder))
         }
     }
@@ -754,7 +754,7 @@ open class OAuth2Api : ApiClient {
         companion object : KSerializer<PatchOAuth2ClientRequest> {
             private val serializer: KSerializer<List<JsonPatch>> = serializer<List<JsonPatch>>()
             override val descriptor = serializer.descriptor
-            override fun serialize(encoder: Encoder, obj: PatchOAuth2ClientRequest) = serializer.serialize(encoder, obj.value)
+            override fun serialize(encoder: Encoder, value: PatchOAuth2ClientRequest) = serializer.serialize(encoder, value.value)
             override fun deserialize(decoder: Decoder) = PatchOAuth2ClientRequest(serializer.deserialize(decoder))
         }
     }

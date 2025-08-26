@@ -45,13 +45,13 @@ data class ProjectApiKey (
     @SerialName(value = "owner_id") @Required val ownerId: kotlin.String,
 
     /* The token's creation date */
-    @SerialName(value = "created_at") val createdAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "created_at") val createdAt: @Contextual kotlin.time.Instant? = null,
 
     /* The Token's Project ID */
     @SerialName(value = "project_id") val projectId: kotlin.String? = null,
 
     /* The token's last update date */
-    @SerialName(value = "updated_at") val updatedAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "updated_at") val updatedAt: @Contextual kotlin.time.Instant? = null,
 
     /* The token's value */
     @SerialName(value = "value") val `value`: kotlin.String? = null

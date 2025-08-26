@@ -51,7 +51,7 @@ data class NormalizedProjectRevisionCourierChannel (
     @SerialName(value = "request_config_method") @Required val requestConfigMethod: kotlin.String,
 
     /* The creation date */
-    @SerialName(value = "created_at") val createdAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "created_at") val createdAt: @Contextual kotlin.time.Instant? = null,
 
     /* API key location  Can either be \"header\" or \"query\" */
     @SerialName(value = "request_config_auth_config_api_key_in") val requestConfigAuthConfigApiKeyIn: kotlin.String? = null,
@@ -77,7 +77,7 @@ data class NormalizedProjectRevisionCourierChannel (
     @SerialName(value = "request_config_url") val requestConfigUrl: kotlin.String? = null,
 
     /* Last upate time */
-    @SerialName(value = "updated_at") val updatedAt: kotlinx.datetime.Instant? = null
+    @SerialName(value = "updated_at") val updatedAt: @Contextual kotlin.time.Instant? = null
 
 ) {
 

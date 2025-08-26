@@ -46,7 +46,7 @@ data class Message (
     @SerialName(value = "body") @Required val body: kotlin.String,
 
     /* CreatedAt is a helper struct field for gobuffalo.pop. */
-    @SerialName(value = "created_at") @Required val createdAt: kotlinx.datetime.Instant,
+    @SerialName(value = "created_at") @Required val createdAt: @Contextual kotlin.time.Instant,
 
     @SerialName(value = "id") @Required val id: kotlin.String,
 
@@ -64,7 +64,7 @@ data class Message (
     @SerialName(value = "type") @Required val type: CourierMessageType,
 
     /* UpdatedAt is a helper struct field for gobuffalo.pop. */
-    @SerialName(value = "updated_at") @Required val updatedAt: kotlinx.datetime.Instant,
+    @SerialName(value = "updated_at") @Required val updatedAt: @Contextual kotlin.time.Instant,
 
     @SerialName(value = "channel") val channel: kotlin.String? = null,
 

@@ -35,7 +35,7 @@ import kotlinx.serialization.encoding.*
 data class Organization (
 
     /* The organization's creation date. */
-    @SerialName(value = "created_at") @Required val createdAt: kotlinx.datetime.Instant,
+    @SerialName(value = "created_at") @Required val createdAt: @Contextual kotlin.time.Instant,
 
     @SerialName(value = "domains") @Required val domains: kotlin.Array<kotlin.String>,
 
@@ -49,7 +49,7 @@ data class Organization (
     @SerialName(value = "project_id") @Required val projectId: kotlin.String,
 
     /* The last time the organization was updated. */
-    @SerialName(value = "updated_at") @Required val updatedAt: kotlinx.datetime.Instant
+    @SerialName(value = "updated_at") @Required val updatedAt: @Contextual kotlin.time.Instant
 
 )
 

@@ -36,7 +36,7 @@ import kotlinx.serialization.encoding.*
 data class TrustOAuth2JwtGrantIssuer (
 
     /* The \"expires_at\" indicates, when grant will expire, so we will reject assertion from \"issuer\" targeting \"subject\". */
-    @SerialName(value = "expires_at") @Required val expiresAt: kotlinx.datetime.Instant,
+    @SerialName(value = "expires_at") @Required val expiresAt: @Contextual kotlin.time.Instant,
 
     /* The \"issuer\" identifies the principal that issued the JWT assertion (same as \"iss\" claim in JWT). */
     @SerialName(value = "issuer") @Required val issuer: kotlin.String,

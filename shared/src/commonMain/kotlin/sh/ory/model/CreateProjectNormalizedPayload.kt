@@ -245,7 +245,7 @@ data class CreateProjectNormalizedPayload (
     @SerialName(value = "name") @Required val name: kotlin.String,
 
     /* The Project's Revision Creation Date */
-    @SerialName(value = "created_at") val createdAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "created_at") val createdAt: @Contextual kotlin.time.Instant? = null,
 
     /* Whether to disable the account experience welcome screen, which is hosted under `/ui/welcome`. */
     @SerialName(value = "disable_account_experience_welcome_screen") val disableAccountExperienceWelcomeScreen: kotlin.Boolean? = null,
@@ -823,7 +823,7 @@ data class CreateProjectNormalizedPayload (
     @SerialName(value = "strict_security") val strictSecurity: kotlin.Boolean? = null,
 
     /* Last Time Project's Revision was Updated */
-    @SerialName(value = "updated_at") val updatedAt: kotlinx.datetime.Instant? = null,
+    @SerialName(value = "updated_at") val updatedAt: @Contextual kotlin.time.Instant? = null,
 
     @SerialName(value = "workspace_id") val workspaceId: kotlin.String? = null
 
