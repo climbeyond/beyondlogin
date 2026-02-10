@@ -36,7 +36,7 @@ import kotlinx.serialization.encoding.*
 data class UpdateLoginFlowWithCodeMethod (
 
     /* CSRFToken is the anti-CSRF token */
-    @SerialName(value = "csrf_token") @Required val csrfToken: kotlin.String,
+    @SerialName(value = "csrf_token") val csrfToken: kotlin.String? = null,
 
     /* Method should be set to \"code\" when logging in using the code strategy. */
     @SerialName(value = "method") @Required override val method: kotlin.String,

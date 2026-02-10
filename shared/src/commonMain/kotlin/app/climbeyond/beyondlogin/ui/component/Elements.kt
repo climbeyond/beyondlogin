@@ -25,7 +25,6 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -149,6 +148,7 @@ object Elements {
     fun EditText(
         label: String,
         modifier: Modifier,
+        fieldText: MutableState<String>,
         fieldType: MutableState<KeyboardType> = mutableStateOf(KeyboardType.Text),
         focusNext: Boolean = false,
         leadingIcon: @Composable (() -> Unit)? = null,
@@ -159,14 +159,12 @@ object Elements {
         valueChange: ((value: String) -> Unit)? = null,
         done: ((value: String) -> Unit)? = null,
     ) {
-
-        val (text, setText) = remember { mutableStateOf("") }
         val keyboardController = LocalSoftwareKeyboardController.current
 
         OutlinedTextField(
-            value = text,
+            value = fieldText.value,
             onValueChange = { change: String ->
-                setText(change)
+                fieldText.value = change
                 valueChange?.invoke(change)
             },
             modifier = modifier.fillMaxWidth(),
@@ -185,7 +183,6 @@ object Elements {
                     if (closeOnDone) {
                         keyboardController?.hide()
                     }
-                    done?.invoke(text)
                 }
             ),
             singleLine = (lines == 1),
@@ -195,6 +192,58 @@ object Elements {
             textStyle = LocalTextStyle.current.copy(
                 textAlign = if (textCenter) TextAlign.Center else TextAlign.Start
             ),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Colors.text_green,
+                unfocusedBorderColor = Colors.white,
+                focusedLabelColor = Colors.white,
+                cursorColor = Colors.white,
+                textColor = Colors.text_white,
+                unfocusedLabelColor = Colors.text_gray,
+                errorBorderColor = Colors.button_error
+            )
+        )
+    }
+
+    @Composable
+    fun RecoveryEditText(
+        modifier: Modifier,
+        fieldText: MutableState<String>,
+        fieldType: MutableState<KeyboardType> = mutableStateOf(KeyboardType.Text),
+        focusNext: Boolean = false,
+        leadingIcon: @Composable (() -> Unit)? = null,
+        trailingIcon: @Composable (() -> Unit)? = null,
+        closeOnDone: Boolean = false,
+        valueChange: ((value: String) -> Unit)? = null,
+    ) {
+        val keyboardController = LocalSoftwareKeyboardController.current
+
+        OutlinedTextField(
+            value = fieldText.value,
+            onValueChange = { change: String ->
+                valueChange?.invoke(change)
+            },
+            modifier = modifier.fillMaxWidth(),
+            leadingIcon = leadingIcon,
+            trailingIcon = trailingIcon,
+            visualTransformation = if (fieldType.value == KeyboardType.Password
+                || fieldType.value == KeyboardType.NumberPassword
+            )
+                PasswordVisualTransformation() else VisualTransformation.None,
+            keyboardOptions = KeyboardOptions(
+                imeAction = if (focusNext) ImeAction.Next else ImeAction.Done,
+                keyboardType = fieldType.value
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    if (closeOnDone) {
+                        keyboardController?.hide()
+                    }
+                }
+            ),
+            singleLine = true,
+            minLines = 1,
+            maxLines = 1,
+            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = Colors.text_green,
                 unfocusedBorderColor = Colors.white,

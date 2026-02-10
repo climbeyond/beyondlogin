@@ -50,8 +50,12 @@ class SessionView(private val self: BeyondLogin) : ControllerView.RequireView {
 
             accountId.value = session.id
             sessionExpire.value = session.expiresAt.toString()
-            accountEmail.value =
+            accountEmail.value = try {
                 session.identity?.traits?.get("email")?.jsonPrimitive?.content ?: ""
+            } catch (ex: Exception) {
+                BLLogger.logError("SessionView.init failed to parse traits: ${ex.message}")
+                ""
+            }
 
         } ?: run {
             BLLogger.logError("SessionView - session not found")

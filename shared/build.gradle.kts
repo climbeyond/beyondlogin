@@ -80,16 +80,16 @@ kotlin {
 }
 
 publishing {
-    val GITHUB_USER: String? by project
-    val GITHUB_TOKEN: String? by project
+    val githubUser: String? by project
+    val githubToken: String? by project
 
     repositories {
         version = rootProject.ext.get("versionName") as String
         maven {
             setUrl("https://maven.pkg.github.com/climbeyond/beyondlogin")
             credentials {
-                username = GITHUB_USER
-                password = GITHUB_TOKEN
+                username = githubUser
+                password = githubToken
             }
         }
     }
@@ -140,14 +140,7 @@ android {
     }
 }
 
-task("testClasses").doLast {
-    println("This is a dummy testClasses task")
-}
-
 afterEvaluate {
-    tasks.getByName("testClasses") {
-        onlyIf { return@onlyIf false }
-    }
     tasks.getByName("linkDebugFrameworkIosX64") {
         onlyIf { return@onlyIf false }
     }
@@ -159,7 +152,7 @@ afterEvaluate {
     }
 }
 
-tasks.create<Copy>("publish-android") {
+tasks.register<Copy>("publish-android") {
     val androidName = "beyondlogin-${rootProject.extra.get("versionName") as String}.aar"
     val apkDir = file("${project.rootDir.absolutePath}/shared/build/outputs/aar/beyondlogin-release.aar")
     val outDir = file("${project.rootDir.absolutePath}/aar")
@@ -175,7 +168,7 @@ tasks.create<Copy>("publish-android") {
     }
 }
 
-tasks.create<Copy>("publish-ios") {
+tasks.register<Copy>("publish-ios") {
     // iOS xcFramework copy
     val xcSaveDir = "beyondlogin-${rootProject.extra.get("versionName") as String}.xcframework"
     val xcDir = file("${project.rootDir.absolutePath}/shared/build/XCFrameworks/release/BeyondLogin.xcframework")

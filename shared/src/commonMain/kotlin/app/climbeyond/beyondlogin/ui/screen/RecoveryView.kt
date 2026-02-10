@@ -61,92 +61,47 @@ import climbeyond.beyondlogin.generated.resources.beyond_login_recovery_header
 import climbeyond.beyondlogin.generated.resources.beyond_login_recovery_new_password
 import climbeyond.beyondlogin.generated.resources.beyond_login_success_return
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import sh.ory.model.RecoveryFlowState
-import sh.ory.model.UiText
-import sh.ory.model.UpdateRecoveryFlowBody
-import sh.ory.model.UpdateSettingsFlowBody
+import org.openapitools.client.models.ContinueWithRecoveryUi
+import org.openapitools.client.models.ContinueWithSetOrySessionToken
+import org.openapitools.client.models.ContinueWithSettingsUi
+import org.openapitools.client.models.RecoveryFlowState
+import org.openapitools.client.models.UiText
+import org.openapitools.client.models.UpdateRecoveryFlowBody
+import org.openapitools.client.models.UpdateRecoveryFlowWithCodeMethod
+import org.openapitools.client.models.UpdateSettingsFlowWithPasswordMethod
+import kotlin.math.min
 
 
 class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
     private var errorMessage = mutableStateOf("")
     private val subView = mutableStateOf(VIEWS.EMAIL)
     private val confirmationText = mutableStateOf("")
-    private val digitsEdit: Array<((digit: String) -> Unit)?> = arrayOf(null, null, null, null, null, null)
-    private val digits = Array(6) { "" }
+    private val digitsEdit: Array<MutableState<String>> = arrayOf(
+        mutableStateOf(""),
+        mutableStateOf(""),
+        mutableStateOf(""),
+        mutableStateOf(""),
+        mutableStateOf(""),
+        mutableStateOf(""),
+    )
 
     private var passwordVisible: MutableState<KeyboardType> = mutableStateOf(KeyboardType.Password)
     private val resetButtonEnabled = mutableStateOf(true)
 
     private var settingsFlow: String? = null
     private var settingsSessionToken: String? = null
-    private var password: String = ""
-
-    var email: String = ""
+    private var password = mutableStateOf("")
+    private val email = mutableStateOf("")
 
     enum class VIEWS {
         EMAIL,
         CONFIRMATION,
         RESET,
         SUCCESS
-    }
-
-    @Serializable
-    data class RecoveryBody(
-            override val email: String,
-            override val method: UpdateRecoveryFlowBody.Method,
-            override val csrfToken: String? = null,
-            override val code: String? = null,
-            override val transientPayload: String? = null,
-            ) : UpdateRecoveryFlowBody
-
-    @Serializable
-    data class SettingsBody(
-            override val method: String,
-            override val password: String,
-    ): UpdateSettingsFlowBody {
-
-        override val traits: String
-            get() = ""
-        override val csrfToken: String?
-            get() = null
-        override val transientPayload: String?
-            get() = null
-        override val flow: String?
-            get() = null
-        override val link: String?
-            get() = null
-        override val unlink: String?
-            get() = null
-        override val upstreamParameters: String?
-            get() = null
-        override val totpCode: String?
-            get() = null
-        override val totpUnlink: Boolean?
-            get() = null
-        override val webauthnRegister: String?
-            get() = null
-        override val webauthnRegisterDisplayname: String?
-            get() = null
-        override val webauthnRemove: String?
-            get() = null
-        override val lookupSecretConfirm: Boolean?
-            get() = null
-        override val lookupSecretDisable: Boolean?
-            get() = null
-        override val lookupSecretRegenerate: Boolean?
-            get() = null
-        override val lookupSecretReveal: Boolean?
-            get() = null
-        override val passkeyRemove: String?
-            get() = null
-        override val passkeySettingsRegister: String?
-            get() = null
     }
 
     @Composable
@@ -273,10 +228,11 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
         val leadingEmailIcon = Elements.editTextIcon(Res.drawable.beyond_login_icon_email)
         Elements.EditText(stringResource(Res.string.beyond_login_login_email),
             Modifier.padding(start = 20.dp, end = 20.dp, top = 60.dp),
+            email,
             leadingIcon = leadingEmailIcon,
-            trailingIcon = null, valueChange = {
+            trailingIcon = null,
+            valueChange = {
                 errorMessage.value = ""
-                email = it
             })
 
         Elements.IconButton(
@@ -290,12 +246,12 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
 
             keyboardController?.hide()
 
-            if (email.isEmpty()) {
+            if (email.value.isEmpty()) {
                 errorMessage.value = fieldEmailFill
                 return@IconButton
             }
 
-            requestRecovery(coroutine, email, recoveryButtonEnabled)
+            requestRecovery(coroutine, email.value, recoveryButtonEnabled)
         }
     }
 
@@ -327,27 +283,39 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
     }
 
     @Composable
-    private fun DigitField(coroutine: CoroutineScope, focusManager: FocusManager, index: Int) {
-        Elements.EditText("", Modifier
+    private fun DigitField(
+        coroutine: CoroutineScope,
+        focusManager: FocusManager,
+        index: Int
+    ) {
+        Elements.RecoveryEditText(Modifier
             .padding(horizontal = 3.dp)
             .width(50.dp)
             .onFocusChanged {
                 if (it.isFocused) {
-                    digitsEdit[index]?.invoke("")
-                    digits[index] = ""
+                    digitsEdit[index].value = ""
                 }
             },
+            digitsEdit[index],
             mutableStateOf(KeyboardType.Number),
-            textCenter = true,
-            valueChange = {
-                digits[index] = it
+            valueChange = { value ->
+                coroutine.launch(Dispatchers.Main) {
+                    if (value.length > 1) {
+                        for (idx in 0..min(5, value.length - 1)) {
+                            digitsEdit[idx].value = value[idx].toString()
+                        }
+                    } else {
+                        digitsEdit[index].value = value.take(1)
+                    }
 
-                val digits = digits.joinToString(separator = "")
-
-                if (digits.length == 6) {
-                    handleRecoveryCode(coroutine, focusManager, digits)
-                } else {
-                    focusManager.moveFocus(FocusDirection.Next)
+                    val digits = digitsEdit.joinToString("") { digits -> digits.value }
+                    if (digits.length == 6) {
+                        handleRecoveryCode(coroutine, focusManager, digits)
+                    } else {
+                        if (index < 5) {
+                            focusManager.moveFocus(FocusDirection.Next)
+                        }
+                    }
                 }
             })
     }
@@ -363,15 +331,16 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
             passwordVisible.value = if (passwordVisible.value == KeyboardType.Text)
                 KeyboardType.Password else KeyboardType.Text
         }
-        Elements.EditText(stringResource(Res.string.beyond_login_recovery_new_password),
-                Modifier.padding(start = 20.dp, end = 20.dp, top = 60.dp),
-                passwordVisible, focusNext = false,
-                leadingIcon = leadingPassIcon,
-                trailingIcon = trailingPassIcon,
-                valueChange = {
-                    errorMessage.value = ""
-                    password = it
-                }
+        Elements.EditText(
+            stringResource(Res.string.beyond_login_recovery_new_password),
+            Modifier.padding(start = 20.dp, end = 20.dp, top = 60.dp),
+            password,
+            passwordVisible, focusNext = false,
+            leadingIcon = leadingPassIcon,
+            trailingIcon = trailingPassIcon,
+            valueChange = {
+                errorMessage.value = ""
+            }
         ) { _ ->
             keyboardController?.hide()
         }
@@ -383,12 +352,12 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
 
             keyboardController?.hide()
 
-            if (password.isEmpty()) {
+            if (password.value.isEmpty()) {
                 errorMessage.value = fieldPasswordFill
                 return@IconButton
             }
 
-            handlePasswordChange(coroutine, password, resetButtonEnabled)
+            handlePasswordChange(coroutine, password.value, resetButtonEnabled)
         }
     }
 
@@ -426,12 +395,13 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
         // Disable button until some failure result - success keeps button disabled
         loginButtonEnabled.value = false
 
-        val method = RecoveryBody(email, method = UpdateRecoveryFlowBody.Method.CODE)
+        val method = UpdateRecoveryFlowWithCodeMethod(method = UpdateRecoveryFlowBody.Method.code, email = email)
 
         coroutine.launch {
             try {
                 val response = self.viewService.getOryApi()
-                    .updateRecoveryFlow(self.viewService.oryFlowId, method, null, null)
+                    .updateRecoveryFlow(self.viewService.oryFlowId,
+                        method, null, null)
 
                 if (response.success) {
                     confirmationText.value = response.body().ui.messages?.let {
@@ -446,7 +416,7 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
 
                     response.body().ui.nodes.forEach { node ->
                         node.messages.forEach { message ->
-                            if (message.type == UiText.Type.ERROR) {
+                            if (message.type == UiText.Type.error) {
                                 errorMessage.value = message.text
                             }
                         }
@@ -460,30 +430,39 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
         }
     }
 
-    private fun handleRecoveryCode(coroutine: CoroutineScope, focusManager: FocusManager,
-            code: String) {
-        val method = RecoveryBody(email = "", method = UpdateRecoveryFlowBody.Method.CODE, code = code)
+    private fun handleRecoveryCode(
+        coroutine: CoroutineScope, focusManager: FocusManager, code: String
+    ) {
+        val method = UpdateRecoveryFlowWithCodeMethod(
+            method = UpdateRecoveryFlowBody.Method.code,
+            code = code,
+        )
 
         coroutine.launch {
             try {
                 val response = self.viewService.getOryApi()
-                    .updateRecoveryFlow(self.viewService.oryFlowId, method, null, null)
+                    .updateRecoveryFlow(self.viewService.oryFlowId,
+                        method, null, null)
 
                 val body = response.body()
 
                 if (response.success) {
-                    if (body.state == RecoveryFlowState.PASSED_CHALLENGE) {
+                    BLLogger.logInfo(body.toString())
+                    if (body.state == RecoveryFlowState.passed_challenge) {
                         var sessionToken = ""
                         var flowId = ""
 
                         body.continueWith?.forEach {
-                            val action = it["action"]?.jsonPrimitive?.content
-
-                            if (action == "set_ory_session_token") {
-                                sessionToken = it["ory_session_token"]?.jsonPrimitive?.content ?: "--"
-                            }
-                            if (action == "show_settings_ui") {
-                                flowId = it["flow"]?.jsonObject?.get("id")?.jsonPrimitive?.content ?: "--"
+                            when (it) {
+                                is ContinueWithSetOrySessionToken -> {
+                                    sessionToken = it.orySessionToken
+                                }
+                                is ContinueWithSettingsUi -> {
+                                    flowId = it.flow.id
+                                }
+                                else -> {
+                                    BLLogger.logWarning("RecoveryView.handleRecoveryCode unknown continueWith: $it")
+                                }
                             }
                         }
 
@@ -506,26 +485,25 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
                 }
 
                 focusManager.clearFocus()
-                digitsEdit.forEach { it?.invoke("") }
-                digits.fill("")
-
+                digitsEdit.forEach { it.value = "" }
             } catch (ex: Exception) {
                 BLLogger.logError("RecoveryView.handleRecoveryCode exception: $ex")
-                ToastBar.showMessage(ex.message ?: "Unknown login error", true)
+                ToastBar.showMessage(ex.message ?: "Unknown recovery error", true)
             }
         }
     }
 
-    private fun handlePasswordChange(coroutine: CoroutineScope, password: String,
-            resetButtonEnabled: MutableState<Boolean>) {
-
+    private fun handlePasswordChange(
+        coroutine: CoroutineScope, password: String, resetButtonEnabled: MutableState<Boolean>
+    ) {
         resetButtonEnabled.value = false
 
         coroutine.launch {
             settingsFlow?.let { settingsFlow ->
-                val settingsBody = SettingsBody(method = "password", password = password)
+                val method = UpdateSettingsFlowWithPasswordMethod(method = "password", password = password)
                 val result = self.viewService.getOryApi()
-                    .updateSettingsFlow(settingsFlow, settingsBody, settingsSessionToken)
+                    .updateSettingsFlow(settingsFlow, method,
+                        settingsSessionToken)
 
                 if (result.success) {
                     errorMessage.value = ""
@@ -534,7 +512,7 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
                 } else {
                     result.body().ui.nodes.forEach { node ->
                         node.messages.forEach { message ->
-                            if (message.type == UiText.Type.ERROR) {
+                            if (message.type == UiText.Type.error) {
                                 errorMessage.value = message.text
                             }
                         }

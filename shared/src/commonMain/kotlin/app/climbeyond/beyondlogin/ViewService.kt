@@ -2,7 +2,7 @@ package app.climbeyond.beyondlogin
 
 import androidx.compose.runtime.mutableStateOf
 import app.climbeyond.beyondlogin.ui.ControllerView
-import sh.ory.api.FrontendApi
+import org.openapitools.client.apis.FrontendApi
 
 
 class ViewService(val settings: Settings.Data, val listener: Listener) : SettingsListener {
@@ -24,17 +24,23 @@ class ViewService(val settings: Settings.Data, val listener: Listener) : Setting
     val currentView = mutableStateOf(ControllerView.Screen.SPLASH)
 
     internal var oryFlowId: String = "-"
-    internal var orySession: sh.ory.model.Session? = null
+    internal var orySession: org.openapitools.client.models.Session? = null
+
+    private var cachedOryApi: FrontendApi? = null
 
     override fun onSettingsChange() {
 
     }
 
     fun getOryApi(): FrontendApi {
-        return BeyondLogin.getOryApi(settings.kratosUrl, settings.logLevel)
+        return cachedOryApi ?: run {
+            val api = BeyondLogin.getOryApi(settings.kratosUrl, settings.logLevel)
+            cachedOryApi = api
+            api
+        }
     }
 
-    fun setSession(session: sh.ory.model.Session?) {
+    fun setSession(session: org.openapitools.client.models.Session?) {
         orySession = session
         currentView.value = ControllerView.Screen.SESSION
     }

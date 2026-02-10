@@ -58,56 +58,18 @@ import io.ktor.util.reflect.typeInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import sh.ory.model.LoginFlow
-import sh.ory.model.UpdateLoginFlowBody
+import org.openapitools.client.models.LoginFlow
+import org.openapitools.client.models.UpdateLoginFlowWithPasswordMethod
 
 
 class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
     private var errorMessage = mutableStateOf("")
     private var passwordVisible: MutableState<KeyboardType> = mutableStateOf(KeyboardType.Password)
 
-    var email: String = ""
-    var password: String = ""
-
-    @Serializable
-    data class LoginBody(
-            override val method: String,
-            override val identifier: String,
-            override val password: String
-    ) : UpdateLoginFlowBody {
-
-        override val csrfToken: String
-            get() = ""
-        override val provider: String
-            get() = ""
-        override val totpCode: String
-            get() = ""
-        override val lookupSecret: String
-            get() = ""
-        override val passwordIdentifier: String?
-            get() = null
-        override val transientPayload: String?
-            get() = null
-        override val idToken: String?
-            get() = null
-        override val idTokenNonce: String?
-            get() = null
-        override val traits: String?
-            get() = null
-        override val upstreamParameters: String?
-            get() = null
-        override val webauthnLogin: String?
-            get() = null
-        override val code: String?
-            get() = null
-        override val resend: String?
-            get() = null
-        override val passkeyLogin: String?
-            get() = null
-    }
+    var email = mutableStateOf("")
+    var password = mutableStateOf("")
 
     @Composable
     override fun View() {
@@ -170,12 +132,12 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
         Elements.EditText(
             stringResource(Res.string.beyond_login_login_email),
             Modifier.padding(start = 20.dp, end = 20.dp, top = 60.dp),
+            email,
             leadingIcon = leadingEmailIcon,
             valueChange = {
                 if (errorMessage.value.isNotEmpty()) {
                     errorMessage.value = ""
                 }
-                email = it
             })
 
         val leadingPassIcon = Elements.editTextIcon(Res.drawable.beyond_login_icon_lock)
@@ -189,6 +151,7 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
         Elements.EditText(
             stringResource(Res.string.beyond_login_login_password),
             Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp),
+            password,
             passwordVisible,
             focusNext = false,
             leadingIcon = leadingPassIcon,
@@ -197,7 +160,6 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
                 if (errorMessage.value.isNotEmpty()) {
                     errorMessage.value = ""
                 }
-                password = it
             }
         ) {
             keyboardController?.hide()
@@ -212,16 +174,16 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
         ) {
             keyboardController?.hide()
 
-            if (email.isEmpty()) {
+            if (email.value.isEmpty()) {
                 errorMessage.value = fieldEmailFill
                 return@IconButton
             }
-            if (password.isEmpty()) {
+            if (password.value.isEmpty()) {
                 errorMessage.value = fieldPasswordFill
                 return@IconButton
             }
 
-            doLogin(coroutine, email, password, loginButtonEnabled)
+            doLogin(coroutine, email.value, password.value, loginButtonEnabled)
         }
 
         if (errorMessage.value.isNotEmpty()) {
@@ -305,12 +267,17 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
         // clear possible error
         errorMessage.value = ""
 
-        val method = LoginBody("password", email, password)
-
         coroutine.launch {
             try {
+                val body = UpdateLoginFlowWithPasswordMethod(
+                    identifier = email,
+                    method = "password",
+                    password = password
+                )
+
                 val response = self.viewService.getOryApi()
-                    .updateLoginFlow(self.viewService.oryFlowId, method, null, null)
+                    .updateLoginFlow(self.viewService.oryFlowId,
+                        body, null, null)
 
                 if (response.success) {
                     val body = response.body()
@@ -330,11 +297,6 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
                                     loginButtonEnabled.value = true
                                     errorMessage.value = failure
                                 })
-                        }
-                    } ?: {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            loginButtonEnabled.value = false
-                            self.viewService.listener.unknownException("LoginView success no sessionToken")
                         }
                     }
 
@@ -361,7 +323,8 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
             BLLogger.logDebug("LoginView.init")
 
             try {
-                val result = self.viewService.getOryApi().createNativeLoginFlow(false, "aal1", null)
+                val result = self.viewService.getOryApi()
+                    .createNativeLoginFlow(false, "aal1", null)
 
                 if (result.success) {
                     self.viewService.oryFlowId = result.body().id

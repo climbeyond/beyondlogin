@@ -9,8 +9,7 @@ import app.climbeyond.beyondlogin.helpers.SharedPreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import sh.ory.model.PerformNativeLogoutBody
-import sh.ory.model.Session
+import org.openapitools.client.models.PerformNativeLogoutBody
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -26,9 +25,10 @@ data class SessionInfo(
 }
 
 internal object Session {
-    fun checkActive(platform: BeyondLoginPlatform,
-            callback: (token: String?, session: Session?, code: Int) -> Unit) {
-
+    fun checkActive(
+        platform: BeyondLoginPlatform,
+        callback: (token: String?, session: org.openapitools.client.models.Session?, code: Int) -> Unit
+    ) {
         CoroutineScope(Dispatchers.Default).launch {
             SharedPreferenceManager.read(platform, BEYOND_LOGIN_SESSION_TOKEN, null)?.let { sessionToken ->
 
@@ -36,11 +36,11 @@ internal object Session {
                 try {
                     val settings = Settings.load(platform)
                     val response = BeyondLogin.getOryApi(settings.kratosUrl, settings.logLevel)
-                        .toSession(sessionToken, null)
+                        .toSession(sessionToken)
                     val code = response.status
 
                     if (response.success) {
-                        val session = response.body()
+                        val session: org.openapitools.client.models.Session = response.body()
 
                         storeSave(platform, sessionToken, session)
 
@@ -63,25 +63,23 @@ internal object Session {
         }
     }
 
-    fun delete(platform: BeyondLoginPlatform, sessionId: String, callback: (success: Boolean) -> Unit) {
+    fun disableOtherSessions(platform: BeyondLoginPlatform, callback: (success: Boolean) -> Unit) {
         CoroutineScope(Dispatchers.Default).launch {
             val token = SharedPreferenceManager.read(platform, BEYOND_LOGIN_SESSION_TOKEN, null)
 
             if (token != null) {
                 val settings = Settings.load(platform)
                 val response = BeyondLogin.getOryApi(settings.kratosUrl, settings.logLevel)
-                    .disableMySession(sessionId, token, null)
+                    .disableMyOtherSessions(token)
                 val code = response.status
 
                 if (response.success) {
-                    deleteSharedPreference(platform)
-
-                    BLLogger.logInfo("Session.delete removed session $sessionId")
+                    BLLogger.logInfo("Session.disableOtherSessions success")
                     callback(true)
 
                 } else {
-                    BLLogger.logError("Session.delete error removing session [Session" +
-                            " $sessionId] [Code ${code}] [Message ${response.response}]")
+                    BLLogger.logError("Session.disableOtherSessions error disabling other sessions" +
+                            " [Code ${code}] [Message ${response.response}]")
                     callback(false)
                 }
 
@@ -98,10 +96,10 @@ internal object Session {
             val token = SharedPreferenceManager.read(platform, BEYOND_LOGIN_SESSION_TOKEN, null)
 
             if (id != null && token != null) {
+                val method = PerformNativeLogoutBody(sessionToken = token)
                 val settings = Settings.load(platform)
-                val payload = PerformNativeLogoutBody(token)
                 val response = BeyondLogin.getOryApi(settings.kratosUrl, settings.logLevel)
-                    .performNativeLogout(payload)
+                    .performNativeLogout(method)
                 val code = response.status
 
                 if (response.success) {
@@ -178,13 +176,18 @@ internal object Session {
         return SharedPreferenceManager.read(platform, BEYOND_LOGIN_SESSION_IDENTITY_ID, null)
     }
 
-    internal fun storeSave(platform: BeyondLoginPlatform, token: String, session: Session) {
+    internal fun storeSave(
+        platform: BeyondLoginPlatform,
+        token: String,
+        session: org.openapitools.client.models.Session
+    ) {
         SharedPreferenceManager.write(platform, BEYOND_LOGIN_SESSION_ID, session.id)
         SharedPreferenceManager.write(platform, BEYOND_LOGIN_SESSION_TOKEN, token)
-        SharedPreferenceManager.write(platform, BEYOND_LOGIN_SESSION_IDENTITY_ID, session.identity?.id ?: "--")
+        SharedPreferenceManager.write(platform, BEYOND_LOGIN_SESSION_IDENTITY_ID,
+            session.identity?.id ?: "--")
         session.expiresAt?.let {
             SharedPreferenceManager.writeLong(platform, BEYOND_LOGIN_SESSION_EXPIRE,
-                    it.toEpochMilliseconds())
+                it.toEpochMilliseconds())
         }
     }
 

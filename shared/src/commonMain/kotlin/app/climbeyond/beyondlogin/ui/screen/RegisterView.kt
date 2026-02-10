@@ -56,51 +56,19 @@ import io.ktor.util.reflect.typeInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import sh.ory.model.RegistrationFlow
-import sh.ory.model.UpdateRegistrationFlowBody
+import org.openapitools.client.models.RegistrationFlow
+import org.openapitools.client.models.UpdateRegistrationFlowWithPasswordMethod
 
 class RegisterView(private val self: BeyondLogin) : ControllerView.RequireView {
     private var errorMessage = mutableStateOf("")
     private var passwordVisible: MutableState<KeyboardType> = mutableStateOf(KeyboardType.Password)
 
-    var email: String = ""
-    var password: String = ""
-
-    @Serializable
-    data class RegistrationBody(
-            override val method: String,
-            override val password: String,
-            override val traits: String,
-            override val provider: String,
-    ) : UpdateRegistrationFlowBody {
-
-        override val csrfToken: String?
-            get() = null
-        override val transientPayload: String?
-            get() = null
-        override val idToken: String?
-            get() = null
-        override val idTokenNonce: String?
-            get() = null
-        override val upstreamParameters: String?
-            get() = null
-        override val webauthnRegister: String?
-            get() = null
-        override val webauthnRegisterDisplayname: String?
-            get() = null
-        override val code: String?
-            get() = null
-        override val resend: String?
-            get() = null
-        override val passkeyRegister: String?
-            get() = null
-    }
+    var email = mutableStateOf("")
+    var password = mutableStateOf("")
 
     @Composable
     override fun View() {
@@ -163,12 +131,12 @@ class RegisterView(private val self: BeyondLogin) : ControllerView.RequireView {
         val leadingIcon = Elements.editTextIcon(Res.drawable.beyond_login_icon_email)
         Elements.EditText(stringResource(Res.string.beyond_login_register_email),
             Modifier.padding(start = 20.dp, end = 20.dp, top = 60.dp),
+            email,
             leadingIcon = leadingIcon,
             trailingIcon = null,
             valueChange = {
                 errorMessage.value = ""
-                email = it
-            }) {}
+            })
 
         val leadingPassIcon = Elements.editTextIcon(Res.drawable.beyond_login_icon_lock)
         val trailingPassIcon = Elements.editTextIcon(
@@ -180,12 +148,12 @@ class RegisterView(private val self: BeyondLogin) : ControllerView.RequireView {
         }
         Elements.EditText(stringResource(Res.string.beyond_login_register_password),
             Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp),
+            password,
             passwordVisible, focusNext = false,
             leadingIcon = leadingPassIcon,
             trailingIcon = trailingPassIcon,
             valueChange = {
                 errorMessage.value = ""
-                password = it
             }
         ) { _ ->
             keyboardController?.hide()
@@ -200,16 +168,16 @@ class RegisterView(private val self: BeyondLogin) : ControllerView.RequireView {
 
             keyboardController?.hide()
 
-            if (email.isEmpty()) {
+            if (email.value.isEmpty()) {
                 errorMessage.value = fieldEmailFill
                 return@IconButton
             }
-            if (password.isEmpty()) {
+            if (password.value.isEmpty()) {
                 errorMessage.value = fieldPasswordFill
                 return@IconButton
             }
 
-            doRegister(coroutine, email, password, loginButtonEnabled)
+            doRegister(coroutine, email.value, password.value, loginButtonEnabled)
         }
 
         if (errorMessage.value.isNotEmpty()) {
@@ -268,28 +236,29 @@ class RegisterView(private val self: BeyondLogin) : ControllerView.RequireView {
         Spacer(modifier = Modifier.height(20.dp))
     }
 
-    private fun doRegister(coroutine: CoroutineScope, email: String, password: String,
-            registerButtonEnabled: MutableState<Boolean>) {
-
+    private fun doRegister(
+        coroutine: CoroutineScope, email: String, password: String,
+        registerButtonEnabled: MutableState<Boolean>
+    ) {
         // Disable button until some failure result - success keeps button disabled
         registerButtonEnabled.value = false
 
         // clear possible error
         errorMessage.value = ""
 
-        val method = RegistrationBody(
-                "password",
-                password,
-                JsonObject(HashMap<String, JsonElement>().apply {
-                    put("email", JsonPrimitive(email))
-                }).toString(),
-                ""
+        val traitsJson = buildJsonObject {
+            put("email", email)
+        }.toString()
+
+        val method = UpdateRegistrationFlowWithPasswordMethod(
+            "password", password, traitsJson
         )
 
         coroutine.launch {
             try {
                 val response = self.viewService.getOryApi()
-                    .updateRegistrationFlow(self.viewService.oryFlowId, method, null)
+                    .updateRegistrationFlow(self.viewService.oryFlowId,
+                        method, null)
 
                 if (response.success) {
                     val body = response.body()
@@ -307,7 +276,7 @@ class RegisterView(private val self: BeyondLogin) : ControllerView.RequireView {
                         Session.storeSave(self.platform, token, session)
 
                         CoroutineScope(Dispatchers.Main).launch {
-                            val expires = body.session.expiresAt?.toEpochMilliseconds() ?: -1
+                            val expires = session.expiresAt?.toEpochMilliseconds() ?: -1
                             self.viewService.listener.registerSuccess(
                                 SessionInfo(session.id, token, expires),
                                 { success ->

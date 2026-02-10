@@ -10,7 +10,7 @@ import io.ktor.client.plugins.logging.Logging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import sh.ory.api.FrontendApi
+import org.openapitools.client.apis.FrontendApi
 
 expect class BeyondLoginPlatform
 expect fun beyondLoginBuildTime(): String
@@ -38,14 +38,14 @@ class BeyondLogin(internal val platform: BeyondLoginPlatform, viewListener: View
     }
 
     /**
-     * Delete session is one exists
+     * Disable all other sessions except current
      */
-    fun sessionDelete(sessionId: String, callback: (success: Boolean) -> Unit) {
+    fun sessionDelete(callback: (success: Boolean) -> Unit) {
         BLLogger.logDebug("Call: BeyondLogin.sessionDelete")
 
         try {
             Settings.load(platform)
-            Session.delete(platform, sessionId) { success ->
+            Session.disableOtherSessions(platform) { success ->
                 CoroutineScope(Dispatchers.Main).launch {
                     callback(success)
                 }
