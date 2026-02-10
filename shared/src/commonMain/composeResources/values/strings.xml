@@ -14,8 +14,11 @@
     <string name="beyond_login_login_email">Email</string>
     <string name="beyond_login_login_password">Password</string>
     <string name="beyond_login_login_button">Login</string>
+    <string name="beyond_login_login_button_email">Password login</string>
+    <string name="beyond_login_login_button_code">One-time code to email</string>
     <string name="beyond_login_login_no_account">Don't have an account?</string>
     <string name="beyond_login_login_no_account_register">Sign up</string>
+    <string name="beyond_login_login_code_sent">An email containing a code has been sent to the email address you provided. If you have not received an email, check the spelling of the address and retry the login.</string>
 
     <string name="beyond_login_register_header">Register</string>
     <string name="beyond_login_register_email">Email</string>

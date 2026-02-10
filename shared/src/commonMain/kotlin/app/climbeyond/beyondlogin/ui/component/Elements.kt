@@ -28,6 +28,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
@@ -39,10 +42,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.climbeyond.beyondlogin.helpers.Colors
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
+import kotlin.math.min
 
 
 object Elements {
@@ -205,7 +212,47 @@ object Elements {
     }
 
     @Composable
-    fun RecoveryEditText(
+    fun DigitField(
+        coroutine: CoroutineScope,
+        digitsEdit: Array<MutableState<String>>,
+        focusManager: FocusManager,
+        index: Int,
+        callback: (digits: String) -> Unit,
+    ) {
+        DigitFieldText(Modifier
+            .padding(horizontal = 3.dp)
+            .width(50.dp)
+            .onFocusChanged {
+                if (it.isFocused) {
+                    digitsEdit[index].value = ""
+                }
+            },
+            digitsEdit[index],
+            mutableStateOf(KeyboardType.Number),
+            valueChange = { value ->
+                coroutine.launch(Dispatchers.Main) {
+                    if (value.length > 1) {
+                        for (idx in 0..min(5, value.length - 1)) {
+                            digitsEdit[idx].value = value[idx].toString()
+                        }
+                    } else {
+                        digitsEdit[index].value = value.take(1)
+                    }
+
+                    val digits = digitsEdit.joinToString("") { digits -> digits.value }
+                    if (digits.length == 6) {
+                        callback(digits)
+                    } else {
+                        if (index < 5) {
+                            focusManager.moveFocus(FocusDirection.Next)
+                        }
+                    }
+                }
+            })
+    }
+
+    @Composable
+    fun DigitFieldText(
         modifier: Modifier,
         fieldText: MutableState<String>,
         fieldType: MutableState<KeyboardType> = mutableStateOf(KeyboardType.Text),

@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -46,7 +47,9 @@ import climbeyond.beyondlogin.generated.resources.beyond_login_field_password_fi
 import climbeyond.beyondlogin.generated.resources.beyond_login_icon_email
 import climbeyond.beyondlogin.generated.resources.beyond_login_icon_lock
 import climbeyond.beyondlogin.generated.resources.beyond_login_login
-import climbeyond.beyondlogin.generated.resources.beyond_login_login_button
+import climbeyond.beyondlogin.generated.resources.beyond_login_login_button_code
+import climbeyond.beyondlogin.generated.resources.beyond_login_login_button_email
+import climbeyond.beyondlogin.generated.resources.beyond_login_login_code_sent
 import climbeyond.beyondlogin.generated.resources.beyond_login_login_email
 import climbeyond.beyondlogin.generated.resources.beyond_login_login_header
 import climbeyond.beyondlogin.generated.resources.beyond_login_login_no_account
@@ -61,6 +64,8 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import org.openapitools.client.models.LoginFlow
+import org.openapitools.client.models.SuccessfulNativeLogin
+import org.openapitools.client.models.UpdateLoginFlowWithCodeMethod
 import org.openapitools.client.models.UpdateLoginFlowWithPasswordMethod
 
 
@@ -68,8 +73,18 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
     private var errorMessage = mutableStateOf("")
     private var passwordVisible: MutableState<KeyboardType> = mutableStateOf(KeyboardType.Password)
 
-    var email = mutableStateOf("")
-    var password = mutableStateOf("")
+    val email = mutableStateOf("")
+    val password = mutableStateOf("")
+    val codeView = mutableStateOf(false)
+
+    private val digitsEdit: Array<MutableState<String>> = arrayOf(
+        mutableStateOf(""),
+        mutableStateOf(""),
+        mutableStateOf(""),
+        mutableStateOf(""),
+        mutableStateOf(""),
+        mutableStateOf(""),
+    )
 
     @Composable
     override fun View() {
@@ -81,7 +96,11 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
                     .fillMaxHeight()
         ) {
             Header()
-            Content(coroutine)
+            if (codeView.value) {
+                ContentCode(coroutine)
+            } else {
+                Content(coroutine)
+            }
             Footer(coroutine)
         }
     }
@@ -93,6 +112,11 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
             Modifier
                 .padding(top = 30.dp, start = 30.dp)
                 .clickable {
+                    if (codeView.value) {
+                        codeView.value = false
+                        return@clickable
+                    }
+
                     self.viewService.let {
                         self.viewService.listener.closeBeyondLogin()
                     }
@@ -165,7 +189,12 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
             keyboardController?.hide()
         }
 
-        Elements.IconButton(stringResource(Res.string.beyond_login_login_button),
+        val buttonText = if (self.settings.codeLogin && password.value.isEmpty()) {
+            stringResource(Res.string.beyond_login_login_button_code)
+        } else {
+            stringResource(Res.string.beyond_login_login_button_email)
+        }
+        Elements.IconButton(buttonText,
             Res.drawable.beyond_login_login,
             modifier = Modifier
                 .fillMaxWidth()
@@ -179,11 +208,15 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
                 return@IconButton
             }
             if (password.value.isEmpty()) {
-                errorMessage.value = fieldPasswordFill
+                if (self.settings.codeLogin) {
+                    requestCodeLogin(coroutine, email.value, loginButtonEnabled)
+                } else {
+                    errorMessage.value = fieldPasswordFill
+                }
                 return@IconButton
             }
 
-            doLogin(coroutine, email.value, password.value, loginButtonEnabled)
+            doLoginEmail(coroutine, email.value, password.value, loginButtonEnabled)
         }
 
         if (errorMessage.value.isNotEmpty()) {
@@ -214,6 +247,36 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
                 color = Colors.text_white,
                 fontSize = 18.sp,
                 textAlign = TextAlign.Center)
+        }
+    }
+
+    @Composable
+    private fun ContentCode(coroutine: CoroutineScope) {
+        val focusManager = LocalFocusManager.current
+        val callback = { digits: String ->
+            handleLoginCode(coroutine, digits)
+        }
+
+        Text(stringResource(Res.string.beyond_login_login_code_sent),
+            Modifier
+                .padding(top = 60.dp, start = 40.dp, end = 40.dp)
+                .fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            color = Colors.text_white,
+            fontSize = 14.sp)
+
+        Row(
+            Modifier
+                .padding(top = 30.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Elements.DigitField(coroutine, digitsEdit, focusManager, 0, callback)
+            Elements.DigitField(coroutine, digitsEdit, focusManager, 1, callback)
+            Elements.DigitField(coroutine, digitsEdit, focusManager, 2, callback)
+            Elements.DigitField(coroutine, digitsEdit, focusManager, 3, callback)
+            Elements.DigitField(coroutine, digitsEdit, focusManager, 4, callback)
+            Elements.DigitField(coroutine, digitsEdit, focusManager, 5, callback)
         }
     }
 
@@ -258,9 +321,28 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
         Spacer(modifier = Modifier.height(20.dp))
     }
 
-    private fun doLogin(coroutine: CoroutineScope, email: String, password: String,
-            loginButtonEnabled: MutableState<Boolean>) {
+    private fun requestCodeLogin(
+        coroutine: CoroutineScope, email: String, loginButtonEnabled: MutableState<Boolean>
+    ) {
+        coroutine.launch {
+            val body = UpdateLoginFlowWithCodeMethod(
+                identifier = email,
+                method = "code"
+            )
 
+            self.viewService.getOryApi()
+                .updateLoginFlow(self.viewService.oryFlowId,
+                    body, null, null)
+
+            codeView.value = true
+            loginButtonEnabled.value = true
+        }
+    }
+
+    private fun doLoginEmail(
+        coroutine: CoroutineScope, email: String, password: String,
+        loginButtonEnabled: MutableState<Boolean>
+    ) {
         // Disable button until some failure result - success keeps button disabled
         loginButtonEnabled.value = false
 
@@ -283,20 +365,8 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
                     val body = response.body()
 
                     body.sessionToken?.let { token ->
-                        Session.storeSave(self.platform, token, body.session)
-
-                        coroutine.launch(Dispatchers.Main) {
-                            val expires = body.session.expiresAt?.toEpochMilliseconds() ?: -1
-                            self.viewService.listener.loginSuccess(
-                                SessionInfo(body.session.id, token, expires),
-                                { success ->
-                                    // Tell client that we are now logged and BeyondLogin should close
-                                    self.viewService.listener.loggedClose(success)
-                                },
-                                { failure ->
-                                    loginButtonEnabled.value = true
-                                    errorMessage.value = failure
-                                })
+                        handleLoginSuccess(coroutine, token, body) {
+                            loginButtonEnabled.value = true
                         }
                     }
 
@@ -314,6 +384,65 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
                 BLLogger.logWarning("LoginView.doLogin exception: $ex")
                 ToastBar.showMessage(ex.message ?: "Unknown login error", true)
             }
+        }
+    }
+
+    private fun handleLoginCode(coroutine: CoroutineScope, code: String) {
+        coroutine.launch {
+            try {
+                val body = UpdateLoginFlowWithCodeMethod(
+                    identifier = email.value,
+                    method = "code",
+                    code = code,
+                )
+
+                val response = self.viewService.getOryApi()
+                    .updateLoginFlow(self.viewService.oryFlowId,
+                        body, null, null)
+
+                if (response.success) {
+                    val body = response.body()
+
+                    body.sessionToken?.let { token ->
+                        handleLoginSuccess(coroutine, token, body)
+                    }
+
+                } else {
+                    self.viewService.listener.loginError()
+
+                    val errorResponse = response.typedBody<LoginFlow>(typeInfo<LoginFlow>())
+                    errorResponse.ui.messages?.forEach {
+                        errorMessage.value = it.text
+                    }
+                }
+
+            } catch (ex: Exception) {
+                BLLogger.logWarning("LoginView.handleLoginCode exception: $ex")
+                ToastBar.showMessage(ex.message ?: "Unknown login error", true)
+            }
+        }
+    }
+
+    private fun handleLoginSuccess(
+        coroutine: CoroutineScope,
+        token: String,
+        body: SuccessfulNativeLogin,
+        appFailure: (() -> Unit)? = null,
+    ) {
+        Session.storeSave(self.platform, token, body.session)
+
+        coroutine.launch(Dispatchers.Main) {
+            val expires = body.session.expiresAt?.toEpochMilliseconds() ?: -1
+            self.viewService.listener.loginSuccess(
+                SessionInfo(body.session.id, token, expires),
+                { success ->
+                    // Tell client that we are now logged and BeyondLogin should close
+                    self.viewService.listener.loggedClose(success)
+                },
+                { failure ->
+                    errorMessage.value = failure
+                    appFailure?.invoke()
+                })
         }
     }
 

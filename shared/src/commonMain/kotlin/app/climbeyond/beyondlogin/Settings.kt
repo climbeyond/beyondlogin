@@ -20,8 +20,10 @@ object Settings {
     @Serializable
     data class Data(
             val kratosUrl: String,
+            val codeLogin: Boolean = true,
             var logLevel: ApiLogLevel = ApiLogLevel.INFO,
-            var logTag: String = "BeyondLogin")
+            var logTag: String = "BeyondLogin",
+    )
 
     @Serializable
     enum class ApiLogLevel {
@@ -65,7 +67,7 @@ object Settings {
         // Store settings
         SharedPreferenceManager.write(platform, BEYOND_LOGIN_SETTINGS, Json.encodeToString(data))
 
-        BLLogger.logDebug("BeyondLogin [Url: ${data.kratosUrl}] [Built: ${beyondLoginBuildTime()}]")
+        BLLogger.logInfo("BeyondLogin [Url: ${data.kratosUrl}] [Built: ${beyondLoginBuildTime()}]")
 
         settings = data
     }
