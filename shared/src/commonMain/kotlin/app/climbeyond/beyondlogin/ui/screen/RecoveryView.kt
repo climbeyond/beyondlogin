@@ -23,9 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
@@ -61,11 +59,9 @@ import climbeyond.beyondlogin.generated.resources.beyond_login_recovery_header
 import climbeyond.beyondlogin.generated.resources.beyond_login_recovery_new_password
 import climbeyond.beyondlogin.generated.resources.beyond_login_success_return
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import org.openapitools.client.models.ContinueWithRecoveryUi
 import org.openapitools.client.models.ContinueWithSetOrySessionToken
 import org.openapitools.client.models.ContinueWithSettingsUi
 import org.openapitools.client.models.RecoveryFlowState
@@ -73,7 +69,6 @@ import org.openapitools.client.models.UiText
 import org.openapitools.client.models.UpdateRecoveryFlowBody
 import org.openapitools.client.models.UpdateRecoveryFlowWithCodeMethod
 import org.openapitools.client.models.UpdateSettingsFlowWithPasswordMethod
-import kotlin.math.min
 
 
 class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
@@ -258,6 +253,9 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
     @Composable
     private fun SubConfirmation(coroutine: CoroutineScope) {
         val focusManager = LocalFocusManager.current
+        val callback = { digits: String ->
+            handleRecoveryCode(coroutine, focusManager, digits)
+        }
 
         Text(confirmationText.value,
                 Modifier
@@ -268,56 +266,18 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
                 fontSize = 14.sp)
 
         Row(
-                Modifier
-                    .padding(top = 30.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+            Modifier
+                .padding(top = 30.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
         ) {
-            DigitField(coroutine, focusManager, 0)
-            DigitField(coroutine, focusManager, 1)
-            DigitField(coroutine, focusManager, 2)
-            DigitField(coroutine, focusManager, 3)
-            DigitField(coroutine, focusManager, 4)
-            DigitField(coroutine, focusManager, 5)
+            Elements.DigitField(coroutine, digitsEdit, focusManager, 0, callback)
+            Elements.DigitField(coroutine, digitsEdit, focusManager, 1, callback)
+            Elements.DigitField(coroutine, digitsEdit, focusManager, 2, callback)
+            Elements.DigitField(coroutine, digitsEdit, focusManager, 3, callback)
+            Elements.DigitField(coroutine, digitsEdit, focusManager, 4, callback)
+            Elements.DigitField(coroutine, digitsEdit, focusManager, 5, callback)
         }
-    }
-
-    @Composable
-    private fun DigitField(
-        coroutine: CoroutineScope,
-        focusManager: FocusManager,
-        index: Int
-    ) {
-        Elements.RecoveryEditText(Modifier
-            .padding(horizontal = 3.dp)
-            .width(50.dp)
-            .onFocusChanged {
-                if (it.isFocused) {
-                    digitsEdit[index].value = ""
-                }
-            },
-            digitsEdit[index],
-            mutableStateOf(KeyboardType.Number),
-            valueChange = { value ->
-                coroutine.launch(Dispatchers.Main) {
-                    if (value.length > 1) {
-                        for (idx in 0..min(5, value.length - 1)) {
-                            digitsEdit[idx].value = value[idx].toString()
-                        }
-                    } else {
-                        digitsEdit[index].value = value.take(1)
-                    }
-
-                    val digits = digitsEdit.joinToString("") { digits -> digits.value }
-                    if (digits.length == 6) {
-                        handleRecoveryCode(coroutine, focusManager, digits)
-                    } else {
-                        if (index < 5) {
-                            focusManager.moveFocus(FocusDirection.Next)
-                        }
-                    }
-                }
-            })
     }
 
     @Composable
@@ -364,17 +324,21 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
     @Composable
     private fun SubSuccess(coroutine: CoroutineScope) {
         Column(
-                Modifier
-                    .padding(top = 60.dp)
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Modifier
+                .padding(top = 60.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(vectorResource(Res.drawable.beyond_login_done), "Success",
-                    Modifier.height(72.dp).width(72.dp), tint = Colors.text_green)
+            Icon(
+                vectorResource(Res.drawable.beyond_login_done), "Success",
+                Modifier.height(72.dp).width(72.dp), tint = Colors.text_green
+            )
 
-            Text(stringResource(Res.string.beyond_login_success_return),
-                    Modifier.padding(top = 30.dp, start = 30.dp, end = 30.dp),
-                    color = Colors.text_white)
+            Text(
+                stringResource(Res.string.beyond_login_success_return),
+                Modifier.padding(top = 30.dp, start = 30.dp, end = 30.dp),
+                color = Colors.text_white
+            )
         }
 
         Elements.IconButton(stringResource(Res.string.beyond_login_login_button),
@@ -447,7 +411,6 @@ class RecoveryView(private val self: BeyondLogin) : ControllerView.RequireView {
                 val body = response.body()
 
                 if (response.success) {
-                    BLLogger.logInfo(body.toString())
                     if (body.state == RecoveryFlowState.passed_challenge) {
                         var sessionToken = ""
                         var flowId = ""
