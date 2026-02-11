@@ -18,7 +18,7 @@ jobs:
           java-version: 17
 
       - name: Build
-        run: ./gradlew assemble --stacktrace -PGITHUB_USER=${{ secrets.PUBLISH_USER }} -PGITHUB_TOKEN=${{ secrets.PUBLISH_TOKEN }}
+        run: ./gradlew assemble --stacktrace -PgithubUser=${{ secrets.PUBLISH_USER }} -PgithubToken=${{ secrets.PUBLISH_TOKEN }}
 
       - name: Release library
-        run: ./gradlew beyondlogin:publish -PGITHUB_USER=${{ secrets.PUBLISH_USER }} -PGITHUB_TOKEN=${{ secrets.PUBLISH_TOKEN }}
+        run: ./gradlew beyondlogin:publish -PgithubUser=${{ secrets.PUBLISH_USER }} -PgithubToken=${{ secrets.PUBLISH_TOKEN }}
