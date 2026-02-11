@@ -11,7 +11,6 @@ class ViewService(val settings: Settings.Data, val listener: Listener) : Setting
         fun loginActive(token: String)
         fun loginSuccess(data: SessionInfo, appSuccess: (success: String) -> Unit,
                 appFailure: (message: String) -> Unit)
-        fun loginError()
         fun registerSuccess(data: SessionInfo, appSuccess: (failure: String) -> Unit,
                 appFailure: (message: String) -> Unit)
         fun registerError()

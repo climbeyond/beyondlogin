@@ -63,7 +63,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import org.openapitools.client.models.LoginFlow
+import org.openapitools.client.infrastructure.HttpResponse
+import org.openapitools.client.models.ErrorGeneric
 import org.openapitools.client.models.SuccessfulNativeLogin
 import org.openapitools.client.models.UpdateLoginFlowWithCodeMethod
 import org.openapitools.client.models.UpdateLoginFlowWithPasswordMethod
@@ -372,12 +373,7 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
 
                 } else {
                     loginButtonEnabled.value = true
-                    self.viewService.listener.loginError()
-
-                    val errorResponse = response.typedBody<LoginFlow>(typeInfo<LoginFlow>())
-                    errorResponse.ui.messages?.forEach {
-                        errorMessage.value = it.text
-                    }
+                    handleLoginError(response)
                 }
 
             } catch (ex: Exception) {
@@ -408,12 +404,7 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
                     }
 
                 } else {
-                    self.viewService.listener.loginError()
-
-                    val errorResponse = response.typedBody<LoginFlow>(typeInfo<LoginFlow>())
-                    errorResponse.ui.messages?.forEach {
-                        errorMessage.value = it.text
-                    }
+                    handleLoginError(response)
                 }
 
             } catch (ex: Exception) {
@@ -421,6 +412,18 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
                 ToastBar.showMessage(ex.message ?: "Unknown login error", true)
             }
         }
+    }
+
+    private suspend fun handleLoginError(response: HttpResponse<SuccessfulNativeLogin>) {
+        BLLogger.logWarning("LoginView.handleLoginError: ${response.status}")
+        // Flow has expired
+        if (response.status == 410) {
+            ToastBar.showMessage("Login expired - refreshing", true)
+            init(self)
+        }
+
+        val errorResponse = response.typedBody<ErrorGeneric>(typeInfo<ErrorGeneric>())
+        errorMessage.value = errorResponse.error.message
     }
 
     private fun handleLoginSuccess(
