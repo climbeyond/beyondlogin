@@ -9,11 +9,13 @@ import app.climbeyond.beyondlogin.helpers.SharedPreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import org.openapitools.client.models.PerformNativeLogoutBody
 import kotlin.time.Clock
 import kotlin.time.Instant
 
 
+@Serializable
 data class SessionInfo(
         val id: String,
         val token: String,

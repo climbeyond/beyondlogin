@@ -158,6 +158,7 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
             stringResource(Res.string.beyond_login_login_email),
             Modifier.padding(start = 20.dp, end = 20.dp, top = 60.dp),
             email,
+            fieldType = mutableStateOf(KeyboardType.Email),
             leadingIcon = leadingEmailIcon,
             valueChange = {
                 if (errorMessage.value.isNotEmpty()) {

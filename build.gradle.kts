@@ -1,5 +1,4 @@
 plugins {
-    //trick: for the same plugin versions in all sub-modules
     alias(libs.plugins.androidLibrary).apply(false)
     alias(libs.plugins.kotlinMultiplatform).apply(false)
 
@@ -16,7 +15,7 @@ extra.apply {
     set("androidCompileSdk", 36)
     set("versionMajor", 0)
     set("versionMinor", 4)
-    set("versionPatch", 0)
+    set("versionPatch", 1)
     set("versionCode",
             ext.get("androidMinSdk") as Int * 10000000
                     + ext.get("versionMajor") as Int * 10000
