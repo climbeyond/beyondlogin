@@ -64,7 +64,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import org.openapitools.client.infrastructure.HttpResponse
-import org.openapitools.client.models.ErrorGeneric
+import org.openapitools.client.models.LoginFlow
 import org.openapitools.client.models.SuccessfulNativeLogin
 import org.openapitools.client.models.UpdateLoginFlowWithCodeMethod
 import org.openapitools.client.models.UpdateLoginFlowWithPasswordMethod
@@ -423,8 +423,23 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
             init(self)
         }
 
-        val errorResponse = response.typedBody<ErrorGeneric>(typeInfo<ErrorGeneric>())
-        errorMessage.value = errorResponse.error.message
+        try {
+            // Bad request 400 - invalid credentials and maybe some other errors
+            val errorResponse = response.typedBody<LoginFlow>(typeInfo<LoginFlow>())
+
+            errorResponse.ui.messages?.forEach {
+                errorMessage.value = it.text
+            }
+            errorResponse.ui.nodes.forEach {
+                it.messages.forEach { error ->
+                    errorMessage.value = error.text
+                }
+            }
+
+        } catch (ex: Exception) {
+            BLLogger.logError("LoginView.handleLoginError exception: $ex")
+            ToastBar.showMessage(ex.message ?: "Unknown login error", true)
+        }
     }
 
     private fun handleLoginSuccess(
@@ -440,7 +455,7 @@ class LoginView(private val self: BeyondLogin) : ControllerView.RequireView {
             self.viewService.listener.loginSuccess(
                 SessionInfo(body.session.id, token, expires),
                 { success ->
-                    // Tell client that we are now logged and BeyondLogin should close
+                    // Tell the client that we are now logged and BeyondLogin should close
                     self.viewService.listener.loggedClose(success)
                 },
                 { failure ->
