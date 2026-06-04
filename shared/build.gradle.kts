@@ -140,9 +140,6 @@ android {
 }
 
 afterEvaluate {
-    tasks.getByName("linkDebugFrameworkIosX64") {
-        onlyIf { return@onlyIf false }
-    }
     tasks.getByName("linkDebugFrameworkIosArm64") {
         onlyIf { return@onlyIf false }
     }
