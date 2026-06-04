@@ -3,12 +3,14 @@ package app.climbeyond.beyondlogin
 import androidx.compose.runtime.Composable
 import app.climbeyond.beyondlogin.exception.BeyondException
 import app.climbeyond.beyondlogin.helpers.BLLogger
+import app.climbeyond.beyondlogin.helpers.ToastBar
 import app.climbeyond.beyondlogin.ui.ControllerView
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import org.openapitools.client.apis.FrontendApi
 
@@ -33,6 +35,10 @@ class BeyondLogin(internal val platform: BeyondLoginPlatform, viewListener: View
         ControllerView.View(this)
     }
 
+    fun getToastMessages(): SharedFlow<ToastBar.CheeseToast?> {
+        return ToastBar.event
+    }
+
     fun requestView(view: ControllerView.Screen) {
         viewService.currentView.value = view
     }
@@ -52,6 +58,7 @@ class BeyondLogin(internal val platform: BeyondLoginPlatform, viewListener: View
             }
 
         } catch (ex: BeyondException) {
+            BLLogger.logError("BeyondLogin.sessionDelete failed: ${ex.message}")
             CoroutineScope(Dispatchers.Main).launch {
                 callback(false)
             }
@@ -73,6 +80,7 @@ class BeyondLogin(internal val platform: BeyondLoginPlatform, viewListener: View
             }
 
         } catch (ex: BeyondException) {
+            BLLogger.logError("BeyondLogin.sessionLogout failed: ${ex.message}")
             CoroutineScope(Dispatchers.Main).launch {
                 callback(false)
             }
@@ -81,7 +89,7 @@ class BeyondLogin(internal val platform: BeyondLoginPlatform, viewListener: View
 
     companion object {
         /**
-         * Check if there is stored session token and it's valid
+         * Check if there is a stored session token and it's valid
          */
         fun sessionHasActive(platform: BeyondLoginPlatform, callback: (token: String?) -> Unit) {
             BLLogger.logDebug("Call: BeyondLogin.sessionHasActive")
@@ -95,6 +103,7 @@ class BeyondLogin(internal val platform: BeyondLoginPlatform, viewListener: View
                 }
 
             } catch (ex: BeyondException) {
+                BLLogger.logError("BeyondLogin.sessionHasActive failed: ${ex.message}")
                 CoroutineScope(Dispatchers.Main).launch {
                     callback(null)
                 }
@@ -102,7 +111,7 @@ class BeyondLogin(internal val platform: BeyondLoginPlatform, viewListener: View
         }
 
         /**
-         * Refresh current session if possible
+         * Refresh the current session if possible
          */
         fun sessionRefresh(platform: BeyondLoginPlatform, callback: (token: String?) -> Unit) {
             BLLogger.logDebug("Call: BeyondLogin.sessionRefresh")
@@ -116,6 +125,7 @@ class BeyondLogin(internal val platform: BeyondLoginPlatform, viewListener: View
                 }
 
             } catch (ex: BeyondException) {
+                BLLogger.logError("BeyondLogin.sessionRefresh failed: ${ex.message}")
                 CoroutineScope(Dispatchers.Main).launch {
                     callback(null)
                 }
@@ -123,7 +133,7 @@ class BeyondLogin(internal val platform: BeyondLoginPlatform, viewListener: View
         }
 
         /**
-         * Check if stored session exists and it has not expired
+         * Check if a stored session exists and it has not expired
          */
         fun storeSessionHasNotExpired(platform: BeyondLoginPlatform): Boolean {
             BLLogger.logDebug("Call: BeyondLogin.storeSessionHasNotExpired")
@@ -132,7 +142,7 @@ class BeyondLogin(internal val platform: BeyondLoginPlatform, viewListener: View
         }
 
         /**
-         * Check if stored session exists and return id and token
+         * Check if a stored session exists and return id and token
          */
         fun storeGetSession(platform: BeyondLoginPlatform): SessionInfo? {
             BLLogger.logDebug("Call: BeyondLogin.storeGetSession")
