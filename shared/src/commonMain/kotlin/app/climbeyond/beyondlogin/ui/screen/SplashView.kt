@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import app.climbeyond.beyondlogin.BeyondLogin
 import app.climbeyond.beyondlogin.Session
@@ -95,7 +96,7 @@ class SplashView(private val self: BeyondLogin) : ControllerView.RequireView {
                     .fillMaxHeight(),
                 contentAlignment = Alignment.Center
         ) {
-            Icon(vectorResource(Res.drawable.beyond_login_logo),
+            Icon(self.splashLogo ?: rememberVectorPainter(vectorResource(Res.drawable.beyond_login_logo)),
                     stringResource(Res.string.beyond_login_splash_logo),
                     tint = Colors.drawable_tint_white)
 

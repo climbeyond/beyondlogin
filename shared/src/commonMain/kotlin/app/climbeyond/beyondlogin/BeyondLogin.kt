@@ -1,6 +1,7 @@
 package app.climbeyond.beyondlogin
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.painter.Painter
 import app.climbeyond.beyondlogin.exception.BeyondException
 import app.climbeyond.beyondlogin.helpers.BLLogger
 import app.climbeyond.beyondlogin.helpers.ToastBar
@@ -29,6 +30,11 @@ class BeyondLogin(internal val platform: BeyondLoginPlatform, viewListener: View
 
     internal val settings = Settings.load(platform)
     internal var viewService: ViewService = ViewService(Settings.load(platform), viewListener)
+
+    /**
+     * Custom logo shown on the splash screen. Falls back to the library's own logo when null.
+     */
+    var splashLogo: Painter? = null
 
     @Composable
     fun View() {
