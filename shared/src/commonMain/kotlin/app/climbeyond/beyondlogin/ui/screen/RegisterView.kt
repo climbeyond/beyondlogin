@@ -52,7 +52,7 @@ import climbeyond.beyondlogin.generated.resources.beyond_login_register_has_acco
 import climbeyond.beyondlogin.generated.resources.beyond_login_register_has_account_login
 import climbeyond.beyondlogin.generated.resources.beyond_login_register_header
 import climbeyond.beyondlogin.generated.resources.beyond_login_register_password
-import io.ktor.util.reflect.typeInfo
+import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -60,7 +60,11 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
+import org.openapitools.client.infrastructure.ApiClient
+import org.openapitools.client.infrastructure.HttpResponse
+import org.openapitools.client.models.ErrorGeneric
 import org.openapitools.client.models.RegistrationFlow
+import org.openapitools.client.models.SuccessfulNativeRegistration
 import org.openapitools.client.models.UpdateRegistrationFlowWithPasswordMethod
 
 class RegisterView(private val self: BeyondLogin) : ControllerView.RequireView {
@@ -298,22 +302,49 @@ class RegisterView(private val self: BeyondLogin) : ControllerView.RequireView {
                 } else {
                     registerButtonEnabled.value = true
                     self.viewService.listener.registerError()
-
-                    val errorResponse = response.typedBody<RegistrationFlow>(typeInfo<RegistrationFlow>())
-                    errorResponse.ui.messages?.forEach {
-                        errorMessage.value = it.text
-                    }
-                    errorResponse.ui.nodes.forEach {
-                        it.messages.forEach { error ->
-                            errorMessage.value = error.text
-                        }
-                    }
+                    handleRegisterError(response)
                 }
 
             } catch (ex: Exception) {
                 BLLogger.logWarning("RegisterView.doRegister exception: $ex")
                 ToastBar.showMessage(ex.message ?: "Unknown register error", true)
             }
+        }
+    }
+
+    private suspend fun handleRegisterError(response: HttpResponse<SuccessfulNativeRegistration>) {
+        val bodyText = response.response.bodyAsText()
+
+        // Always log the raw server response so the actual reason is visible without having to
+        // separately enable Settings.ApiLogLevel.BODY to inspect the wire traffic
+        BLLogger.logWarning("RegisterView.handleRegisterError: ${response.status} -- $bodyText")
+
+        try {
+            // Bad request 400 - invalid traits/password and maybe some other flow validation errors
+            val errorResponse = ApiClient.JSON_DEFAULT.decodeFromString<RegistrationFlow>(bodyText)
+
+            errorResponse.ui.messages?.forEach {
+                errorMessage.value = it.text
+            }
+            errorResponse.ui.nodes.forEach {
+                it.messages.forEach { error ->
+                    errorMessage.value = error.text
+                }
+            }
+
+        } catch (ex: Exception) {
+            // Not a RegistrationFlow body - e.g. Ory's generic error envelope for a flow that
+            // could no longer be found, or a server/administrator-side rejection (see the
+            // logged body above for the exact reason)
+            val message = try {
+                ApiClient.JSON_DEFAULT.decodeFromString<ErrorGeneric>(bodyText).error.let {
+                    it.reason ?: it.message
+                }
+            } catch (ex2: Exception) {
+                null
+            }
+
+            errorMessage.value = message ?: "Registration failed (${response.status})"
         }
     }
 

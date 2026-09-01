@@ -18,6 +18,7 @@ kotlin {
         namespace = "app.climbeyond.beyondlogin"
         compileSdk = rootProject.ext.get("androidCompileSdk") as Int
         minSdk = rootProject.extra.get("androidMinSdk") as Int
+        androidResources.enable = true
     }
 
     val xcf = XCFramework("BeyondLogin")
@@ -61,6 +62,9 @@ kotlin {
 
         androidMain.dependencies {
             implementation(libs.androidx.preference.ktx)
+            implementation(libs.androidx.credentials)
+            implementation(libs.androidx.credentials.play.services.auth)
+            implementation(libs.googleid)
         }
 
         iosMain.dependencies {
@@ -103,14 +107,16 @@ afterEvaluate {
 }
 
 tasks.register<Copy>("publish-android") {
+    dependsOn("assembleAndroidMain")
+
     val androidName = "beyondlogin-${rootProject.extra.get("versionName") as String}.aar"
-    val apkDir = file("${project.rootDir.absolutePath}/shared/build/outputs/aar/beyondlogin-release.aar")
+    val apkDir = file("${project.rootDir.absolutePath}/shared/build/outputs/aar/beyondlogin.aar")
     val outDir = file("${project.rootDir.absolutePath}/aar")
 
     from(apkDir)
     into(outDir)
     include("**/*")
-    rename("beyondlogin-release.aar", androidName)
+    rename("beyondlogin.aar", androidName)
     doLast {
         println(">>>publish $androidName success!" +
                 "\nfrom: $apkDir" +
