@@ -125,20 +125,37 @@ dependencyResolutionManagement {
 }
 ```
 
-## Google SSO setup
+## Kratos configuration
 
-BeyondLogin submits Google sign-in to Kratos via its native OIDC method (`method: oidc, provider: google`
-with an `id_token` + `id_token_nonce`), the same way Kratos' own native/mobile samples do it. Your Kratos
-instance must already have the `google` provider configured under OIDC in `kratos.yml`.
-
-The "Continue with Google" button only appears on the login screen (it also covers first-time sign-up:
-Kratos creates the identity automatically from the Google ID token's claims if none exists yet).
-
-### Kratos configuration
-Add an `oidc` block under `selfservice.methods`, alongside your other methods:
+BeyondLogin expects your Kratos instance's `selfservice.methods` to have the methods it supports enabled.
+A base configuration covering all of them:
 ```yaml
 selfservice:
   methods:
+    password:
+      enabled: true
+    totp:
+      config:
+        issuer: Kratos
+      enabled: true
+    lookup_secret:
+      enabled: true
+    link:
+      enabled: true
+    code:
+      enabled: true
+      passwordless_enabled: true
+      config:
+        missing_credential_fallback_enabled: true
+        lifespan: 15m
+    webauthn:
+      enabled: true
+      config:
+        passwordless: true
+        rp:
+          id: <your-domain>                    # e.g. example.com
+          origin: https://<your-domain>/        # e.g. https://login.example.com/
+          display_name: <your-app-name>         # e.g. Your App
     oidc:
       enabled: true
       config:
@@ -159,6 +176,20 @@ selfservice:
             additional_id_token_audiences:
               - <your-ios-client-id>.apps.googleusercontent.com
 ```
+The `oidc` provider block above is only needed if you enable Google SSO (see below); the other methods
+(password, one-time-password code, password reset link, TOTP/lookup secret, and WebAuthn/passkeys) apply
+regardless of whether Google SSO is used.
+
+## Google SSO setup
+
+BeyondLogin submits Google sign-in to Kratos via its native OIDC method (`method: oidc, provider: google`
+with an `id_token` + `id_token_nonce`), the same way Kratos' own native/mobile samples do it. Your Kratos
+instance must already have the `google` provider configured under OIDC as shown in the [Kratos
+configuration](#kratos-configuration) section above.
+
+The "Continue with Google" button only appears on the login screen (it also covers first-time sign-up:
+Kratos creates the identity automatically from the Google ID token's claims if none exists yet).
+
 `client_id` should be a Google OAuth 2.0 **"Web application"** client - that's also the value used as
 `googleServerClientId` in Android setup below.
 
