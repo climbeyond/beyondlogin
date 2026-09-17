@@ -110,6 +110,44 @@ object Elements {
         }
     }
 
+    @Composable
+    fun GoogleButton(text: String, icon: DrawableResource, modifier: Modifier = Modifier,
+            buttonEnabled: MutableState<Boolean> = mutableStateOf(true),
+            click: () -> Unit) {
+
+        Button(
+                click,
+                modifier.height(48.dp),
+                enabled = buttonEnabled.value,
+                shape = RoundedCornerShape(3.dp),
+                border = BorderStroke(1.dp, Colors.google_button_border),
+                contentPadding = PaddingValues(0.dp),
+                colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Colors.white,
+                        disabledBackgroundColor = Colors.white
+                )
+        ) {
+            Row(
+                    Modifier.padding(20.dp, 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                        imageVector = vectorResource(icon),
+                        contentDescription = "drawable icons",
+                        // Google's logo is multi-color - do not apply a single tint to it
+                        tint = Color.Unspecified,
+                )
+                Text(
+                        text = text,
+                        Modifier.padding(start = 10.dp),
+                        color = Colors.google_button_text,
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
+
     fun editTextIcon(res: DrawableResource, contentDesc: StringResource? = null,
             tint: Color = Colors.drawable_tint_white,
             click: (() -> Unit)? = null):

@@ -20,4 +20,8 @@ object Colors {
     val divider = Color(0xFFCCCCCC)
 
     val drawable_tint_white = Color(0xFFFFFFFF)
+
+    // Google brand guidelines for "Sign in with Google" buttons
+    val google_button_border = Color(0xFFDADCE0)
+    val google_button_text = Color(0xFF3C4043)
 }

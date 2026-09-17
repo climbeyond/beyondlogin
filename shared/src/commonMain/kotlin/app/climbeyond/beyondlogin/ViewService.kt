@@ -18,6 +18,18 @@ class ViewService(val settings: Settings.Data, val listener: Listener) : Setting
         fun logOut(success: Boolean)
         fun unknownException(message: String)
         fun closeBeyondLogin()
+
+        /**
+         * Only called on platforms where BeyondLogin does not perform native Google Sign-In
+         * itself (currently iOS). Implement using your own Google Sign-In integration: generate
+         * a nonce, perform the sign-in, then invoke [callback] with the resulting ID token and
+         * that same nonce. Invoke [callback] with (null, null) if the user cancels or it fails.
+         * The default implementation does this, meaning Google Sign-In will fail on platforms
+         * that don't override it.
+         */
+        fun requestGoogleIdToken(callback: (idToken: String?, nonce: String?) -> Unit) {
+            callback(null, null)
+        }
     }
 
     val currentView = mutableStateOf(ControllerView.Screen.SPLASH)

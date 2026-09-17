@@ -18,6 +18,7 @@ Features include:
 * Email registration
 * Login via password and one-time-password code
 * Password reset
+* Google SSO (native, via Kratos' native OIDC login method - see [Google SSO setup](#google-sso-setup))
 
 ## Download
 Android and iOS library is available through github packages
@@ -123,6 +124,149 @@ dependencyResolutionManagement {
     }
 }
 ```
+
+## Kratos configuration
+
+BeyondLogin expects your Kratos instance's `selfservice.methods` to have the methods it supports enabled.
+A base configuration covering all of them:
+```yaml
+selfservice:
+  methods:
+    password:
+      enabled: true
+    totp:
+      config:
+        issuer: Kratos
+      enabled: true
+    lookup_secret:
+      enabled: true
+    link:
+      enabled: true
+    code:
+      enabled: true
+      passwordless_enabled: true
+      config:
+        missing_credential_fallback_enabled: true
+        lifespan: 15m
+    webauthn:
+      enabled: true
+      config:
+        passwordless: true
+        rp:
+          id: <your-domain>                    # e.g. example.com
+          origin: https://<your-domain>/        # e.g. https://login.example.com/
+          display_name: <your-app-name>         # e.g. Your App
+    oidc:
+      enabled: true
+      config:
+        providers:
+          - id: google           # must be exactly "google" - the client hardcodes this as the
+                                  # provider name when submitting the oidc method
+            provider: google
+            client_id: <your-web-client-id>.apps.googleusercontent.com
+            client_secret: <web-client-secret>
+            mapper_url: base64://<base64-encoded jsonnet, see below>
+            scope:
+              - email
+              - profile
+            # Needed whenever a platform's ID token carries a different `aud` than client_id -
+            # e.g. an iOS app using its own iOS-type OAuth client via GoogleSignIn-iOS. Android's
+            # debug/release OAuth clients (SHA-1-scoped) never appear as `aud` and don't belong
+            # here - see the Android section below.
+            additional_id_token_audiences:
+              - <your-ios-client-id>.apps.googleusercontent.com
+```
+The `oidc` provider block above is only needed if you enable Google SSO (see below); the other methods
+(password, one-time-password code, password reset link, TOTP/lookup secret, and WebAuthn/passkeys) apply
+regardless of whether Google SSO is used.
+
+## Google SSO setup
+
+BeyondLogin submits Google sign-in to Kratos via its native OIDC method (`method: oidc, provider: google`
+with an `id_token` + `id_token_nonce`), the same way Kratos' own native/mobile samples do it. Your Kratos
+instance must already have the `google` provider configured under OIDC as shown in the [Kratos
+configuration](#kratos-configuration) section above.
+
+The "Continue with Google" button only appears on the login screen (it also covers first-time sign-up:
+Kratos creates the identity automatically from the Google ID token's claims if none exists yet).
+
+`client_id` should be a Google OAuth 2.0 **"Web application"** client - that's also the value used as
+`googleServerClientId` in Android setup below.
+
+`mapper_url` is required and has no default; a minimal jsonnet mapper for an identity schema whose only
+trait is `email`:
+```jsonnet
+local claims = std.extVar('claims');
+
+{
+  identity: {
+    traits: {
+      // Only accept a Google-verified email as an identifier, so an unverified address can't be
+      // used to take over an existing account that uses the same email.
+      [if 'email' in claims && claims.email_verified then 'email' else null]: claims.email,
+    },
+  },
+}
+```
+Base64-encode it (`base64 -w0 mapper.jsonnet`) to inline it as shown above, or serve it via `file://`
+or `https://` instead - see Kratos' docs on [OIDC provider mapping](https://www.ory.sh/docs/kratos/reference/configuration).
+
+#### Account linking
+If a Google sign-in's email matches an existing identity that doesn't have the `google` provider linked
+yet, Kratos doesn't error out - it re-issues a fresh login flow (dropping the oidc option, offering only
+the account's existing methods) with an info message asking the user to sign in with that method first.
+BeyondLogin's `LoginView` already detects this and switches to the new flow automatically, prefilling the
+identifier - so completing that fresh flow (e.g. entering the account's password) signs the user in and
+Kratos automatically attaches the Google credential to that identity for next time. No extra client or
+server work needed beyond the config above.
+
+### Settings
+Two `Settings.Data` fields control the feature, set in whatever `Settings.init(...)` call you already do:
+```
+Settings.init(BeyondLoginPlatform(...), Settings.Data([URL to kratos API]).apply {
+    googleOidcEnabled = true                  // master switch - shows the button on both platforms
+    googleServerClientId = "your-web-client-id.apps.googleusercontent.com"  // Android only
+})
+```
+`googleOidcEnabled` alone controls the button on iOS. On Android, the button additionally requires
+`googleServerClientId` to be set - both are needed there.
+
+#### Android
+Fully handled inside BeyondLogin using [Credential Manager](https://developer.android.com/identity/sign-in/credential-manager).
+`googleServerClientId` must be the **same Web client ID** configured for the `google` provider in Kratos
+(Credential Manager requires a Web-type client ID as the audience even on Android - the separate,
+SHA-1-scoped Android OAuth clients you register per debug/release signing cert in Google Cloud Console are
+only used by Play Services to verify the calling app; they're never referenced in code and never appear
+as the ID token's `aud`, so they don't go into Kratos' `additional_id_token_audiences` either).
+
+Note: pass an Activity `Context` when constructing `BeyondLoginPlatform` on Android, since Credential
+Manager needs it to show the account picker UI.
+
+#### iOS
+BeyondLogin does not embed Google's iOS SDK. Instead, implement
+[GoogleSignIn-iOS](https://developers.google.com/identity/sign-in/ios) in your own Xcode project and
+override `requestGoogleIdToken` on your `ViewService.Listener`:
+```
+override fun requestGoogleIdToken(callback: (idToken: String?, nonce: String?) -> Unit) {
+    // Generate a nonce, run your GoogleSignIn-iOS flow with it, then:
+    callback(idToken, nonce) // or callback(null, null) on cancel/failure
+}
+```
+The nonce is an arbitrary string you generate yourself (e.g. a UUID) - pass the same value to both
+`GIDSignIn`'s `nonce:` parameter and this callback; Google echoes it back into the ID token's `nonce`
+claim unmodified (no hashing needed, unlike Sign in with Apple), and Kratos compares it against what you
+send as `idTokenNonce`.
+
+`googleServerClientId` is not used on iOS - your iOS OAuth client is configured directly in the host
+app's own Google Sign-In setup, which additionally needs, outside of this library:
+* `GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: "<ios-client-id>")` set once at
+  launch.
+* The client ID's **reversed** form (e.g. `com.googleusercontent.apps.xxxxx-yyyy`) registered as a
+  `CFBundleURLTypes` URL scheme in `Info.plist`.
+* `GIDSignIn.sharedInstance.handle(url)` called from `application(_:open:options:)`, so the sign-in
+  redirect can complete.
+* The iOS client ID added to Kratos' `additional_id_token_audiences` (see Kratos configuration above),
+  since it's a different OAuth client than the Web one used for `client_id`/Android.
 
 ## Screenshots
 <div style="display: flex; flex-wrap: wrap;">

@@ -23,6 +23,20 @@ object Settings {
             val codeLogin: Boolean = true,
             var logLevel: ApiLogLevel = ApiLogLevel.INFO,
             var logTag: String = "BeyondLogin",
+            /**
+             * Google OAuth 2.0 "Web application" client ID - the same client_id configured for
+             * the `google` provider in Kratos' OIDC config. Required on Android to request a
+             * Google ID token via Credential Manager. Not used on iOS, where the host app
+             * performs native Google Sign-In itself (see [ViewService.Listener.requestGoogleIdToken]).
+             */
+            var googleServerClientId: String? = null,
+            /**
+             * Master switch for showing Google sign-in in the login UI - lets a host app that
+             * hasn't set up the `google` OIDC provider in Kratos keep the button hidden. On
+             * Android, the button also requires [googleServerClientId] to be set; both need to be
+             * satisfied for it to appear.
+             */
+            var googleOidcEnabled: Boolean = false,
     )
 
     @Serializable
